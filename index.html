@@ -243,7 +243,7 @@ body.spf-open{overflow:hidden}
 .confirm-card p{margin:0;font-size:12px;color:var(--mute);line-height:1.6}
 .confirm-row{display:flex;gap:8px;justify-content:flex-end}
 .confirm-row button{border-radius:99px;padding:8px 16px;font-size:14px;cursor:pointer;border:1px solid var(--line);background:var(--sheet)}
-.ch-imgs{display:flex;gap:6px}.ch-imgs:empty{display:none}.ch-imgs figure{margin:0;flex:1;min-width:0}.ch-imgs img{width:100%;height:70px;object-fit:cover;border-radius:8px}.ch-imgs figcaption{font-size:10px;color:var(--mute);text-align:center}
+.ch-imgs{display:flex;gap:6px}.ch-imgs.many{flex-wrap:wrap}.ch-imgs.many figure{flex:0 0 calc(25% - 5px)}.ch-imgs.many img{height:56px}.ch-imgs:empty{display:none}.ch-imgs figure{margin:0;flex:1;min-width:0}.ch-imgs img{width:100%;height:70px;object-fit:cover;border-radius:8px}.ch-imgs figcaption{font-size:10px;color:var(--mute);text-align:center}
 .ch-row{flex-wrap:wrap}.ch-row button.main{background:var(--ink);border-color:var(--ink);color:var(--sheet);font-weight:700}
 .confirm-row .danger{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:700}
 .cta{margin:6px 18px 30px;background:var(--ink);color:var(--sheet);border:0;border-radius:14px;padding:14px;font-weight:700;font-size:15px;cursor:pointer;flex:none}
@@ -856,7 +856,7 @@ tr.click:hover td{background:var(--soft)}
   <div class="spf-detail" id="spf-detail" hidden></div>
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
-<script>window.TC_TRIAL={"version": "1.0.4", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
+<script>window.TC_TRIAL={"version": "1.0.5", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -913,6 +913,7 @@ const FEATURE_LIST=[
   {id:'realSamples',name:'D-27 サンプルの散歩を実写の写真に',off:'サンプルの散歩A・B・Cは描いた絵（今まで）'},
   {id:'lastMean',name:'21a 最後の地点は平均',off:'最後の地点の歩いた時間は、ほかの区間の中央値（今まで）'},
   {id:'dtRel',name:'D-24 長い散歩の歩いた時間の上限を散歩に合わせる',off:'写真の間が20分を超えたら、すべて20分として扱う（今まで）'},
+  {id:'gapMax',name:'別の日の写真の間を4時間とみなす（2026-10-31）',off:'写真の間をそのまま使う（作曲 0.45 まで）'},
   {id:'cityType',name:'D-25 街の種類で楽器を変える',off:'街はすべて灰色の面として電子ピアノ（今まで）'},
   {id:'surround',name:'10 地面の素材は周囲に合わせる',off:'土・わら・木を人工に、舗装・砂利も建物と同じだけ数える（今まで）'},
   {id:'night',name:'10 夜（形で判断・夜らしい響き）',off:'夜も昼と同じ判定（照明の色も素材に数える）、夜らしい響きを足さない'},
@@ -1036,6 +1037,9 @@ const tz={timeZone:'Asia/Tokyo'};
 const hhmm=ts=>new Date(ts*1000).toLocaleTimeString('ja-JP',{...tz,hour:'2-digit',minute:'2-digit'});
 const full=ts=>new Date(ts*1000).toLocaleString('ja-JP',{...tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
 const dur=s=>{s=Math.round(s);if(s<60)return s+'秒';const m=Math.floor(s/60),r=s%60;return r?`${m}分${r}秒`:`${m}分`};
+// 写真の間（秒）。別の日の写真が混ざったときのため、WALK_GAP_MAX（4時間）より長い間はその長さとみなす（2026-10-31、飯田。開発用 ON/OFF「gapMax」）
+const gapOf=(g,F=FEATURES)=>F.gapMax!==false?Math.min(g,PARAM.WALK_GAP_MAX):g;
+const walkSpan=n=>{let s=0;for(let i=1;i<n.length;i++)s+=gapOf(n[i].ts-n[i-1].ts);return s};
 const durMin=s=>{const m=Math.round(s/60);return m>=60?`${Math.floor(m/60)}時間${m%60?m%60+'分':''}`:`${m}分`};
 const clock=p=>`${Math.floor(p/60)}:${String(Math.floor(p%60)).padStart(2,'0')}`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1073,10 +1077,11 @@ async function compose(raw,opts={}){
   const glintRng=mulberry32((seed^0x3C3C3C3C)>>>0);
   // STEP 6-1 滞在時間（上限 DT_MAX）
   // D-24（2026-10-21）：上限を散歩に合わせる。写真の間隔の平均の DT_REL_K 倍（DT_MAX より短くはしない）。短い散歩は今までと同じ
-  const span=nodes.length>1?nodes[nodes.length-1].ts-nodes[0].ts:0;
+  const gap=i=>F.gapMax!==false?Math.min(nodes[i+1].ts-nodes[i].ts,K.WALK_GAP_MAX):nodes[i+1].ts-nodes[i].ts; // 4時間より長い間は4時間とみなす（2026-10-31）
+  let span=0;for(let i=0;i<nodes.length-1;i++)span+=gap(i);
   const dtCap=F.dtRel!==false&&nodes.length>1?Math.max(K.DT_MAX,K.DT_REL_K*span/(nodes.length-1)):K.DT_MAX;
   // ステップ21a：上限で切る前の歩いた時間（rawDt）と、切ったかどうか（capped）も残す（散歩譜のため）
-  let items=nodes.map((n,i)=>{const raw=i<nodes.length-1?nodes[i+1].ts-n.ts:null;return{members:[n],dt:raw==null?null:Math.min(dtCap,raw),rawDt:raw,capped:raw!=null&&raw>dtCap,
+  let items=nodes.map((n,i)=>{const raw=i<nodes.length-1?gap(i):null;return{members:[n],dt:raw==null?null:Math.min(dtCap,raw),rawDt:raw,capped:raw!=null&&raw>dtCap,
     unknown:!!n.timeUnknown||(i<nodes.length-1&&!!nodes[i+1].timeUnknown)}});
   // STEP 6-2 MERGE_DT 未満は次の地点と結合
   const mergeInto=(a,b)=>{b.members=a.members.concat(b.members);if(b.dt!=null)b.dt+=a.dt;if(b.rawDt!=null)b.rawDt+=a.rawDt;b.capped=a.capped||b.capped;b.unknown=a.unknown||b.unknown};
@@ -1452,7 +1457,7 @@ async function compose(raw,opts={}){
 
 /* ---------- ステップ21a 散歩譜のデータと譜番号（統合仕様書 v1.2 第3章 3-2・3-3） ---------- */
 // 作曲の仕組みの版（algorithm.md の版と同じ番号）。音を決める処理を変えたら上げる。版が違うと、同じ散歩譜からでも曲が変わることがある
-const ALGO_VERSION='0.43',ALGO_DATE='2026-10-28';
+const ALGO_VERSION='0.46',ALGO_DATE='2026-10-31';
 // 開発版の日付（画面や散歩譜の「開発版 YYYY-MM-DD」。開発版を更新するたびに変える）
 const DEV_DATE='2026-10-31';
 const SANPOFU_FORMAT=1,APP_VERSION=(TRIAL?'timelapse-composer trial '+TRIAL.version:'timelapse-composer dev '+DEV_DATE)+' (algorithm v'+ALGO_VERSION+')';
@@ -1504,7 +1509,7 @@ function songFromSanpofu(doc,change={}){
     ...(typeof ch.moods[i]==='number'?{mood:ch.moods[i]}:{}),...(ch.sabi.includes(i)?{sabi:true}:{})}));
   // ステップ24：曲の長さ。長さを入れる前のファイルは総小節数から（なければ3分）
   const len=ch.length||({30:1,90:3,150:5,360:12}[doc.totalBars])||3;
-  return compose(nodes,{features:doc.features,moodOff:ch.moodOff,style:ch.style||'mellow',length:len,seedHex:doc.seedHex}).then(song=>({song,nodes}));
+  return compose(nodes,{features:{gapMax:false,...doc.features},moodOff:ch.moodOff,style:ch.style||'mellow',length:len,seedHex:doc.seedHex}).then(song=>({song,nodes}));
 }
 function thumbOf(src){return new Promise(res=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=160;c.height=120;
   const s=Math.max(160/im.naturalWidth,120/im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;c.getContext('2d').drawImage(im,(160-w)/2,(120-h)/2,w,h);res(c.toDataURL('image/jpeg',.7))};im.onerror=()=>res(null);im.src=src})}
@@ -1975,7 +1980,7 @@ function setPlayIcon(){if(typeof tutPlaying!=='undefined'&&tutPlaying&&!$('#tut'
 const strip=song=>`<span class="strip" title="曲の構成（色＝調、幅＝小節数）">${song?song.items.map(it=>`<i style="flex:${it.bars};background:${SCALE_COL[it.scale]}"></i>`).join(''):''}</span>`;
 function renderWalkRow(){
   $('#walk-row').innerHTML=walkDefs().map(def=>{const wk=state.walks[def.id],n=sorted(wk);
-    const meta=!n.length?'まだ写真がありません':`${n.length}地点 · ${durMin(n[n.length-1].ts-n[0].ts)}${def.user?' · 端末に保存':' · '+new Date(n[0].ts*1000).toLocaleDateString('ja-JP',{...tz,month:'numeric',day:'numeric'})}`;
+    const meta=!n.length?'まだ写真がありません':`${n.length}地点 · ${durMin(walkSpan(n))}${def.user?' · 端末に保存':' · '+new Date(n[0].ts*1000).toLocaleDateString('ja-JP',{...tz,month:'numeric',day:'numeric'})}`;
     return`<button class="walk" data-w="${def.id}" aria-pressed="${def.id===state.walkId}"><span class="wn">${def.id}. ${esc(def.name)}</span><span class="wm">${meta}</span><span class="wd">${esc(def.desc)}</span>${strip(wk.song)}</button>`}).join('')+
     (userDef?'':`<button class="walk add" id="walk-add"><span class="wn">＋ 自分の散歩を記録する</span><span class="wd">実際に撮った写真で散歩を記録します。シャッターでカメラが開き、撮った時刻（と取れれば位置）を記録します。ライブラリの写真もまとめて取り込めます。</span></button>`);
   $('#walk-row').querySelectorAll('.walk[data-w]').forEach(b=>b.addEventListener('click',()=>setWalk(b.dataset.w)));
@@ -1998,7 +2003,7 @@ async function importPhotos(files){
   // ⑥（ステップ9.1）：撮影時刻が読めない写真は、直前の「時刻が分かる写真」から5分おきに並べる。
   // 最初から分からないときは、散歩を始めた時刻（いちばん早い記録）を基準にする（記録がなければ取り込んだ時刻）。同じ写真を同じ順番で取り込めば同じ時刻になる
   const picked=Math.round(Date.now()/1000);let ok=0,fail=0,unknown=0,heicFail=0;
-  let lastKnown=null,sinceKnown=0;const walkStart=wk.nodes.length?Math.min(...wk.nodes.map(n=>n.ts)):picked;
+  let lastKnown=null,sinceKnown=0;const news=[];const walkStart=wk.nodes.length?Math.min(...wk.nodes.map(n=>n.ts)):picked;
   const say=t=>{$('#walk-tools').textContent=t;$('#cam-hint').textContent=t};
   for(let i=0;i<files.length;i++){
     say(`写真を解析しています… ${i+1} / ${files.length}`);
@@ -2007,15 +2012,23 @@ async function importPhotos(files){
     if(!r.ok){fail++;try{if(window.TCExif.isHeif(await files[i].slice(0,16).arrayBuffer()))heicFail++}catch(_){}continue}
     const known=r.exif&&r.exif.time!=null;if(!known)unknown++;
     let ts;if(known){ts=r.exif.time;lastKnown=ts;sinceKnown=0}else{sinceKnown++;ts=(lastKnown!=null?lastKnown:walkStart)+sinceKnown*UNKNOWN_INTERVAL_SEC}
-    addRealNode(wk,{id:'r'+Date.now().toString(36)+'-'+i,src:URL.createObjectURL(r.thumb),blob:r.thumb,big:r.big||null,params:r.params,
+    news.push({id:'r'+Date.now().toString(36)+'-'+i,src:URL.createObjectURL(r.thumb),blob:r.thumb,big:r.big||null,params:r.params,
       ts,timeUnknown:!known,
       lat:noLocation?null:r.exif&&r.exif.lat,lng:noLocation?null:r.exif&&r.exif.lng,memo:'',note:'',file:files[i].name,via:r.via,addedAt:Date.now()});
-    ok++;
   }
+  say('');
+  // 別の日の写真が混ざっても、全部まとめて使う（2026-10-31、飯田）。写真の間は WALK_GAP_MAX までとみなす（gapOf）
+  const use=news;
+  for(const n of use){await addRealNode(wk,n);ok++}
   renderWalkRow();
   toast(`${ok}枚を記録しました`+(unknown?`（時刻不明 ${unknown}枚）`:'')+(fail?`。${fail}枚は読み込めませんでした`:'')+(heicFail?`（うち${heicFail}枚は iPhone の HEIC 形式で、このブラウザでは開けません。Safari で開くか、iPhone の「設定 → カメラ → フォーマット → 互換性優先」で撮ってください）`:''),heicFail?7000:1400);
   if(state.phase===1)renderCam();if(state.phase===2)renderEdit();if(state.phase===3)enterPlay();
   ensureSong(wk).then(renderWalkRow);
+  // 取り込んだ写真を見せる（2026-10-31、体験者の声「反映されたか分からない」「ほかの写真はどう見る？」）
+  if(SHELL&&ok){const add=[...use].sort((a,b)=>a.ts-b.ts),more=add.length>8;
+    const v=await askChoice({title:`${ok}枚を入れました（この散歩は全部で ${wk.nodes.length}枚）`,text:'撮った時刻の順に並びます。全部の写真は「2 なおす」で見られます。'+(more?`（ここでは最初の8枚だけ出しています）`:''),many:true,
+      imgs:add.slice(0,8).map(n=>({src:n.src,cap:n.timeUnknown?'時刻不明':hhmm(n.ts)})),options:[['edit','2 なおすで見る',true],['stay','このまま続ける']]});
+    if(v==='edit')setPhase(2)}
 }
 $('#user-files').addEventListener('change',e=>{importPhotos(e.target.files);e.target.value=''});
 
@@ -2278,7 +2291,7 @@ $('#ed-cancel').addEventListener('click',()=>closeEditor(false));
 function toast(msg,ms=1400){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),ms)}
 let deleting=null,confirmAction=null;
 /* ex9：いくつかの中から選んでもらう小さな画面。選んだ値（やめたときは null）を返す */
-function askChoice({title,text,imgs,options}){return new Promise(res=>{const box=$('#choice');
+function askChoice({title,text,imgs,options,many}){return new Promise(res=>{const box=$('#choice');$('#ch-imgs').classList.toggle('many',!!many);
   $('#ch-title').textContent=title;$('#ch-text').textContent=text||'';
   $('#ch-imgs').innerHTML=(imgs||[]).map(x=>`<figure><img src="${x.src}" alt=""><figcaption>${esc(x.cap||'')}</figcaption></figure>`).join('');
   $('#ch-row').innerHTML=options.map(([v,label,main],i)=>`<button type="button" data-i="${i}" class="${main?'main':''}">${esc(label)}</button>`).join('');
@@ -2311,11 +2324,11 @@ $('#cf-cancel').addEventListener('click',()=>{deleting=null;confirmAction=null;$
 $('#cf-ok').addEventListener('click',()=>{const f=confirmAction;confirmAction=null;$('#confirm').hidden=true;if(f)f()});
 function renderEdit(){
   const wk=cur(),n=sorted(wk),first=n[0],lastN=n[n.length-1];
-  const d=n.map((x,i)=>i<n.length-1?n[i+1].ts-x.ts:null);
+  const d=n.map((x,i)=>i<n.length-1?gapOf(n[i+1].ts-x.ts):null);
   const fallback=median(d.filter(v=>v!=null&&v>=8));
   if(wk.sel>=wk.nodes.length)wk.sel=0;
   $('#edit-date').textContent=new Date(first.ts*1000).toLocaleDateString('ja-JP',{...tz,month:'long',day:'numeric'})+'の散歩 · '+wk.def.name;
-  $('#edit-title').textContent=`${n.length}地点 · ${durMin(lastN.ts-first.ts)}`;
+  $('#edit-title').textContent=`${n.length}地点 · ${durMin(walkSpan(n))}`;
   const widths=n.map((x,i)=>{const dt=d[i]==null?fallback:Math.min(1200,d[i]);return Math.round(Math.max(66,40+dt/60*9))});
   renderMoodRow(wk,n,widths);
   const cand=sabiCandidates(wk);$('#sabi-cand').innerHTML=cand.length?'サビの候補：'+cand.map(c=>`<button type="button" class="cand" data-i="${wk.nodes.indexOf(c.x)}">#${n.indexOf(c.x)+1} ${c.why}</button>`).join(' '):'';
