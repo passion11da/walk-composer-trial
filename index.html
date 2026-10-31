@@ -278,6 +278,8 @@ body.spf-open{overflow:hidden}
 .rs-sec{margin:10px 0 4px;font-weight:700;font-size:12px}
 .rs-opt{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:12px;line-height:1.5}.rs-opt input{margin-top:3px;width:18px;height:18px;flex:none}
 .rs-opt small{display:block;color:var(--mute)}
+.rs-f textarea{display:block;width:100%;margin-top:3px;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--ink)}
+.rs-how{font-size:12px;line-height:1.7;background:var(--soft);border-radius:10px;padding:8px 10px;margin:8px 0}.rs-how ol{margin:4px 0 0;padding-left:1.3em}
 .rs-f{display:grid;gap:3px;margin:6px 0;font-size:12px}.rs-f input,.rs-f select{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:15px;background:var(--sheet);color:inherit;min-height:44px}
 .rs-f small{color:var(--mute)}
 .rs-consent{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:12px}.rs-consent ul{margin:4px 0;padding-left:1.2em}
@@ -302,6 +304,12 @@ body.shell #menu .walks{display:block!important}
 body.shell .sguide{top:44px}body.shell .sguide .sg-h{padding-top:10px}
 @media (max-width:520px){body.shell .sguide{top:calc(44px + env(safe-area-inset-top,0px))}}
 body.shell .scr{top:44px}
+/* ステップ2を小さく（体験者の声：窮屈。写真は上の並びだけ、サビの候補は出さない、サビ・メモ・削除は1行に） */
+body.shell #scr-2 .app-lead:not(.shell-only),body.shell #sabi-cand,body.shell #d-img,body.shell .d-sabi small{display:none!important}
+body.shell .d-memo{font-size:15px}body.shell .d-note{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.shell .d-lbl{font-size:11px;color:var(--mute);margin-bottom:-4px}
+body.shell .d-actions{gap:6px}body.shell .d-actions button{min-height:36px;border-radius:99px;padding:4px 12px;font-size:13px}
+body.shell .d-actions #d-sabi{border:1px solid var(--line);background:var(--sheet);color:var(--ink)}body.shell .d-actions #d-sabi[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
 body.shell .cam-top{padding-top:10px}body.shell .app-h{padding-top:12px}body.shell .back{top:10px}
 body.shell .qz-btns,body.shell #scr-3 .spf-btns,body.shell #len-pick,body.shell #style-pick{display:none!important}
 body.shell #pick #len-pick,body.shell #pick #style-pick{display:flex!important;justify-content:center}
@@ -363,6 +371,7 @@ body.shell #pick #len-pick,body.shell #pick #style-pick{display:flex!important;j
 .tut-smp-t{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}.tut-smp-t b{display:inline!important;font-size:13px!important;font-family:var(--f-body)!important;margin:0!important}
 .tut-smp-t button{min-height:40px;min-width:88px;border-radius:99px;border:0;background:var(--route);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
 .tut-note{font-size:12px;color:var(--mute)}
+.tut-qa{margin:4px 0}.tut-qa dt{font-weight:700;margin-top:8px}.tut-qa dt::before{content:'Q. ';color:var(--route)}.tut-qa dd{margin:2px 0 0 1.4em}
 .tut-nav{display:flex;gap:8px;margin-top:8px}
 .tut-nav button{flex:1;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font-size:15px;cursor:pointer}
 .tut-nav button.main{background:var(--route);border-color:var(--route);color:#fff;font-weight:700}
@@ -583,7 +592,7 @@ tr.click:hover td{background:var(--soft)}
         <section id="scr-2" class="scr app" hidden>
           <span class="status">21:10</span>
           <div class="app-h"><div class="eyebrow" id="edit-date"></div><h2 id="edit-title"></h2></div>
-          <p class="app-lead">幅は「次の写真までに歩いた時間」です。写真を選んで、そのとき何を感じたか書き足してください。</p>
+          <p class="app-lead">幅は「次の写真までに歩いた時間」です。写真を選んで、そのとき何を感じたか書き足してください。</p><p class="app-lead shell-only" id="lead2s">写真を選んで、気分・サビ・メモを入れられます（どれも入れなくて大丈夫）。</p>
           <div class="mood-tools"><span>気分の線（点を上下にドラッグ）</span><label><input type="checkbox" id="mood-off"> 気分を使わない</label><span id="sabi-cand"></span></div>
           <div class="tlw" id="tlw"><div class="mood-row" id="mood-row" aria-label="気分の線"></div><div class="tl" id="timeline"></div></div>
           <div class="detail" id="detail"></div>
@@ -622,10 +631,10 @@ tr.click:hover td{background:var(--soft)}
         <!-- PHASE 4（2026-10-31）：体験のおわり。展示用に送る（もとの名前は「研究に送る」） -->
         <section id="scr-4" class="scr app" hidden>
           <div class="app-h"><div class="eyebrow">4 · おわり</div><h2>おつかれさまでした</h2></div>
-          <p class="app-lead">あなたの散歩の曲ができました。よければ、卒業制作展の展示に協力してください。送るかどうかは自由です。</p>
-          <div class="p4-in"><img src="assets/tenchan.png" alt="" class="p4-img"><p class="p4-say">きいてくれて ありがとう！<br>てんじに きょうりょく してくれたら うれしいな！</p></div>
+          <p class="app-lead">あなたの散歩の曲ができました。よければ、卒業制作に協力してください。送るかどうかは自由です。</p>
+          <div class="p4-in"><img src="assets/tenchan.png" alt="" class="p4-img"><p class="p4-say">アプリを つかってくれて ありがとう！<br>そつぎょうせいさくに きょうりょく してくれたら うれしいな！</p></div>
           <button class="cta" id="p4-send">展示用に送る</button>
-          <div class="p4-more"><button type="button" id="p4-listen">もう一度聴く</button><button type="button" id="p4-spf">散歩譜を見る</button><button type="button" id="p4-start">はじめの画面へ</button></div>
+          <div class="p4-more"><button type="button" id="p4-squiz">知らない景色でクイズ（見本の散歩）</button><button type="button" id="p4-feedback" hidden>アンケートに答える（zip もここから送れます）</button><button type="button" id="p4-listen">もう一度聴く</button><button type="button" id="p4-spf">散歩譜を見る</button><button type="button" id="p4-start">はじめの画面へ</button></div>
         </section>
         <!-- 加筆エディタ（PHASE 2・3 共通） -->
         <div class="editor" id="editor" hidden>
@@ -672,7 +681,7 @@ tr.click:hover td{background:var(--soft)}
           <div class="sguide shell-only" id="menu" hidden role="dialog" aria-modal="true" aria-labelledby="menu-title">
             <div class="sg-h"><b id="menu-title">メニュー</b><button type="button" id="menu-close">閉じる</button></div>
             <div class="sg-body" id="menu-body">
-              <div class="menu-btns"><button type="button" id="mn-tut">つかいかたを見る</button><button type="button" id="mn-guide">風景と音の早見表</button><button type="button" id="mn-spf-file">散歩譜ファイルを開く</button><button type="button" id="mn-start">はじめの画面にもどる</button></div>
+              <div class="menu-btns"><button type="button" id="mn-tut">つかいかたを見る</button><button type="button" id="mn-squiz">見本の散歩でクイズ</button><button type="button" id="mn-feedback" hidden>アンケートに答える</button><button type="button" id="mn-guide">風景と音の早見表</button><button type="button" id="mn-spf-file">散歩譜ファイルを開く</button><button type="button" id="mn-start">はじめの画面にもどる</button></div>
               <div id="menu-walks"></div>
             </div>
           </div>
@@ -847,7 +856,7 @@ tr.click:hover td{background:var(--soft)}
   <div class="spf-detail" id="spf-detail" hidden></div>
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
-<script>window.TC_TRIAL={"version": "1.0.3", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
+<script>window.TC_TRIAL={"version": "1.0.4", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -1972,7 +1981,7 @@ function renderWalkRow(){
   $('#walk-row').querySelectorAll('.walk[data-w]').forEach(b=>b.addEventListener('click',()=>setWalk(b.dataset.w)));
   if($('#walk-add'))$('#walk-add').addEventListener('click',()=>{ensureRealWalk();state.walkId=null;setWalk(REAL_ID);setPhase(1)});
   const hasReal=userDef&&state.walks[REAL_ID].nodes.length;
-  $('#walk-tools').innerHTML=(userDef?`<label for="user-files">ライブラリの写真をまとめて取り込む</label><button class="linkish" id="walk-clear">この散歩を消して新しく始める</button><label class="noloc"><input type="checkbox" id="no-loc" ${noLocation?'checked':''}> 位置を記録しない</label><span>写真と記録はこの端末の中だけに保存し、外には送りません。</span>`:'')+
+  $('#walk-tools').innerHTML=(userDef?`<label for="user-files">ライブラリの写真をまとめて取り込む</label><button class="linkish" id="walk-clear">この散歩を消して新しく始める</button><label class="noloc"><input type="checkbox" id="no-loc" ${noLocation?'checked':''}> 位置を記録しない</label><span>写真と記録はこの端末の中だけに保存します。データが勝手に外部に送られることはありません。</span>`:'')+
     (hasReal?`<button class="linkish" id="bk-save" style="color:var(--route)">この散歩を控えとして保存</button><label class="noloc"><input type="checkbox" id="bk-pos"> 控えに位置を入れる</label>`:'')+
     `<label for="backup-in">控えから戻す</label>`;
   if($('#bk-save'))$('#bk-save').addEventListener('click',exportBackup);
@@ -2319,10 +2328,12 @@ function renderEdit(){
   $('#detail').innerHTML=`<img src="${s.src}" alt="選んだ地点の写真" id="d-img">
     <div class="d-memo"><small>${s.timeUnknown?'時刻不明':hhmm(s.ts)}${s.posUnknown&&isReal(wk)?' · 位置不明（地図は仮の位置）':''} 現場で書いた一言</small>${esc(s.memo||'（なし）')}</div>
     <div class="d-place" id="d-place"></div>
+    <div class="d-lbl shell-only">この場所の気分（入れなくてもよい）</div>
     <div class="d-mood" id="d-mood"></div>
     <div class="d-sabi"><button type="button" id="d-sabi" aria-pressed="${!!s.sabi}">${s.sabi?'★ サビ（もう一度押すと外す）':'☆ ここをサビにする'}</button><small>サビは2か所まで。選ばなくてもよい</small></div>
     <div class="d-note">${s.note?esc(s.note):'まだ書き足していません。'}</div>
     <div class="d-actions"><button class="btn-edit" id="d-edit">${s.note?'メモを編集する':'メモを書き足す'}</button><button class="btn-del" id="d-del" ${wk.nodes.length<2?'disabled title="最後の1枚は削除できません"':''}>この写真を削除</button></div>`;
+  if(SHELL){$('#d-edit').textContent=s.note?'メモを直す':'メモを書く';$('.d-actions').prepend($('#d-sabi'));$('#d-del').textContent='削除'}
   $('#d-edit').addEventListener('click',()=>openEditor(s));
   moodSlider($('#d-mood'),s.mood==null?null:s.mood,v=>{setMood(wk,s,v);renderEdit()});
   $('#d-sabi').addEventListener('click',()=>setSabi(wk,s,!s.sabi));
@@ -2503,7 +2514,7 @@ const RS={blob:null,name:''};
 function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blob=null;
   const hasQ=QZ.log.length>0,hasMemo=wk.nodes.some(n=>n.memo||n.note);
   const opt=(id,label,sub,on,dis)=>`<label class="rs-opt"><input type="checkbox" id="rs-${id}" ${on?'checked':''} ${dis?'disabled':''}><span>${label}${sub?`<small>${sub}</small>`:''}</span></label>`;
-  $('#rs-body').innerHTML=`<p>この散歩のデータを、卒業制作展の展示のために、制作者（飯田）に送れます。送るかどうかは自由です。</p>
+  $('#rs-body').innerHTML=`<p>この散歩のデータを、卒業制作のために、制作者に送ることができます。送るかどうかは自由です。</p>
     <div class="rs-sec">送るもの</div>
     ${opt('doc','散歩譜ファイル（かならず入ります）','これだけで同じ曲を作り直せます。写真そのものや位置の数字は入りません',true,true)}
     ${opt('photo','写真','長い辺 1024 画素まで。撮った場所などの情報は消してから入れます',true)}
@@ -2517,6 +2528,8 @@ function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blo
     <label class="rs-f">属性<select id="rs-attr"><option value="">（書かない）</option>${RS_ATTR.map(x=>`<option>${x}</option>`).join('')}</select></label>
     <label class="rs-f">年代<select id="rs-age"><option value="">（書かない）</option>${RS_AGE.map(x=>`<option>${x}</option>`).join('')}</select></label>
     <label class="rs-f">地域（都道府県か国名）<input id="rs-area" autocomplete="off" maxlength="40"><small>市町村より細かくは書かないでください</small></label>
+    <label class="rs-f">どのあたりを歩きましたか（差し支えなければ）<input id="rs-where" autocomplete="off" maxlength="60"><small>町や駅の名前くらいまで。番地は書かないでください</small></label>
+    <label class="rs-f">そのほか気づいたこと・感想<textarea id="rs-comment" rows="3" maxlength="1000"></textarea></label>
     <div class="rs-consent"><b>同意のお願い</b><ul><li>参加も、送るのも自由です。</li><li>研究・卒業制作展・講評会で使います。</li><li>名前と属性は、書いた分だけ展示に出します（空欄のものは出しません）。</li><li>顔が分かる写真は使いません。</li><li>消す時期：（未定）</li></ul>
       <label class="rs-opt"><input type="checkbox" id="rs-agree"><span>上の内容に同意して、送るデータを作ります</span></label></div>
     <button type="button" class="rs-go" id="rs-make" disabled>送るデータ（zip）を作る</button><p class="qz-msg" id="rs-msg"></p><div id="rs-after"></div>`;
@@ -2538,16 +2551,20 @@ async function rsMake(){const wk=cur(),song=wk.song,g=id=>$('#rs-'+id),on=id=>g(
     if(on('wav')){msg.textContent='曲（WAV）を作っています…（数秒〜数十秒）';files.push({name:'song.wav',blob:encodeWav(await renderSong(song))})}
     const v=x=>(x||'').trim(),items=['散歩譜ファイル',on('photo')&&'写真',on('track')&&'歩いた道の形',on('clock')&&'撮った時刻',on('memo')&&'一言とメモ',on('wav')&&'曲（WAV）',on('quiz')&&'クイズの結果'].filter(Boolean);
     const now=new Date(),consent=[`同意した日時\t${now.toISOString()}`,`選んだもの\t${items.join('・')}`,`アプリの版\t${APP_VERSION}`,`作曲の仕組みの版\t${ALGO_VERSION}`,`言語\tja`,`譜番号\t${fu}`,
-      `展示に使う名前\t${v(g('name').value)}`,`属性\t${g('attr').value}`,`年代\t${g('age').value}`,`地域\t${v(g('area').value)}`,
+      `展示に使う名前\t${v(g('name').value)}`,`属性\t${g('attr').value}`,`年代\t${g('age').value}`,`地域\t${v(g('area').value)}`,`歩いたあたり\t${v(g('where').value)}`,`気づいたこと・感想\t${v(g('comment').value).replace(/\s*\n\s*/g,' ／ ')}`,
       `同意の内容\t参加も送るのも自由／研究・卒業制作展・講評会で使う／名前と属性は書いた分だけ展示に出す／顔が分かる写真は使わない／消す時期は未定`];
     files.push({name:'consent.txt',blob:new Blob(['\uFEFF'+consent.join('\r\n')],{type:'text/plain'})});
     RS.blob=await makeZip(files);RS.name=`research_${now.toISOString().slice(0,10).replace(/-/g,'')}_${fu.replace('-','')}.zip`;
     const canShare=!!(navigator.canShare&&navigator.canShare({files:[new File([RS.blob],RS.name,{type:'application/zip'})]}));
-    msg.textContent=`できました（${Math.round(RS.blob.size/1024)}KB・譜番号 ${fu}）。共有か保存を選んで、制作者に送ってください。`;
-    $('#rs-after').innerHTML=`<div class="rs-done">${canShare?'<button type="button" class="main" id="rs-share">共有する（LINE・メール など）</button>':''}<button type="button" id="rs-save" class="${canShare?'':'main'}">保存する</button></div>`;
-    if(canShare)$('#rs-share').addEventListener('click',async()=>{try{await navigator.share({files:[new File([RS.blob],RS.name,{type:'application/zip'})],title:'散歩のデータ'})}catch(_){}});
+    msg.textContent=`できました（${Math.round(RS.blob.size/1024)}KB・譜番号 ${fu}）。`;
+    $('#rs-after').innerHTML=`${rsHowTo()}<div class="rs-done"><button type="button" class="main" id="rs-save">保存する</button><button type="button" id="rs-form">アンケートを開く</button>${canShare?'<button type="button" id="rs-share">共有する（LINE・Instagram など）</button>':''}</div>`;
+    $('#rs-form').addEventListener('click',openFeedback);
+    // 共有できたら、ダイアログを閉じて 4 おわりへ（体験者の声：送ったあと画面が変わらず迷った）
+    if(canShare)$('#rs-share').addEventListener('click',async()=>{try{await navigator.share({files:[new File([RS.blob],RS.name,{type:'application/zip'})],title:'散歩のデータ'});$('#rs').hidden=true;if(SHELL&&state.phase!==4)setPhase(4);toast('送ってくれて ありがとう！',3000)}catch(_){}});
     $('#rs-save').addEventListener('click',rsSave);
   }catch(e){msg.textContent='作れませんでした。もう一度ためしてください。';$('#rs-make').disabled=false}}
+// 送り方（2026-10-31、飯田）：制作者の個人チャットか、フォームへ
+function rsHowTo(){return`<div class="rs-how"><b>送り方</b><ol><li>「保存する」で zip をスマホに保存します。</li><li><a href="${FEEDBACK_URL}" target="_blank" rel="noopener">アンケート（Google フォーム）</a>を開き、先頭の Dropbox のリンクから zip を送ります（ログインは要りません）。そのままアンケートに答えてください。</li></ol><p style="margin:4px 0 0">または「共有する」で、制作者の <b>LINE・Instagram（@niwakaplayer）・Discord</b> などの個人チャットに送っても大丈夫です。</p></div>`}
 async function rsSave(){const dl=await dlReady;
   if(dl){try{await dl.save({filename:RS.name,data:RS.blob});toast('保存しました')}catch(_){}return}
   const a=document.createElement('a');a.href=URL.createObjectURL(RS.blob);a.download=RS.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
@@ -2580,7 +2597,7 @@ function qzBindWho(){const i=$('#qz-who');if(i)i.addEventListener('input',()=>QZ
 function qzRender(){const b=$('#qz-body');
   if(QZ.kind==='a'){
     if(QZ.i>=QZ.qs.length){b.innerHTML=`<p class="qz-msg">${QZ.qs.length}問中 ${QZ.score}問 正解</p><p>曲の一部だけで、どの場所かがわかりましたか？</p>${qzWho()}<div class="qz-act">${SHELL?'<button type="button" class="main" id="qz-next4">つぎへ（4 送る）</button>':''}<button type="button" class="${SHELL?'':'main'}" id="qz-again">もう一度</button><button type="button" id="qz-csv">結果を保存（CSV）</button></div>`;
-      if(SHELL)$('#qz-next4').addEventListener('click',()=>{qzClose();setPhase(4)});
+      if(SHELL)$('#qz-next4').addEventListener('click',()=>{qzClose();const real=state.walks&&state.walks[REAL_ID];if(!isReal(cur())&&real&&real.song)setWalk(REAL_ID);setPhase(4)});
       qzBindWho();$('#qz-again').addEventListener('click',()=>qzOpen('a'));$('#qz-csv').addEventListener('click',qzCsv);return}
     const q=QZ.qs[QZ.i];
     b.innerHTML=`<p>第${QZ.i+1}問（全${QZ.qs.length}問）　曲の一部を聴いて、どの写真の場所の音か選んでください。</p>
@@ -2622,7 +2639,7 @@ $('#qz-open-a').addEventListener('click',()=>qzOpen('a'));$('#qz-open-b').addEve
    言葉の選び方は実装側の仮決め（要確認）。場所の性格ごとに、この曲で何割鳴っているかも出す */
 const PLACE_FEEL={openNat:['空が広く、緑が多い所（河原・公園・田んぼ）','ふわっと浮かぶような、明るく広がる響き'],
   closedNat:['木や緑に囲まれた所（林・並木・庭）','あたたかく、素直に明るい響き'],
-  openCity:['空が広く、建物が多い所（広い道・駅前・広場）','明るいけれど、少しくだけた響き'],
+  openCity:['空が広く、建物が多い所（広い道・駅前・広場）','明るいけれど、少し力の抜けた響き'],
   closedCity:['建物に囲まれた所（路地・商店街・ビルの谷間）','しっとりとした、少しさびしげな響き'],
   none:['空・緑・建物のどれも少ない所（壁の前・足もと・屋内）','素朴で、どこか懐かしい5つの音の響き']};
 function renderSoundGuide(){const wk=cur(),song=wk.song;const tot={};let all=0;
@@ -2675,7 +2692,7 @@ function showPop(it,instant){
     const m=it.members,lead=m[0],notes=m.map(x=>x.note).filter(Boolean).join(' ');
     // ステップ25：その地点の場所の性格と理由を出し、ここから気分とサビを直して、すぐ聴き直せるようにする（曲を「育てる」）
     const fix=FEATURES.popEdit!==false&&!pl.songOverride,sab=m.some(x=>x.sabi);
-    pop.innerHTML=`<div class="pimgs">${m.slice(0,2).map(x=>`<img src="${x.src}" alt="">`).join('')}</div><div class="pb"><span class="pmeta mono">#${it.idx+1} · ${hhmm(lead.ts)} · ${it.bars}小節 · ${it.key} ${SCALE_JA[it.scale]} · 気分 ${moodJa(lead.mood)}</span>${fix?`<span class="pplace">${placeLine(it)}</span>`:''}<span class="pmemo">${esc(m.map(x=>x.memo).filter(Boolean).join(' / ')||'（一言なし）')}</span><span class="pnote">${esc(notes||'帰宅後のメモはまだありません。')}</span>${fix?`<div class="pfix" role="group" aria-label="この地点の気分とサビを直す">気分${MOODS.map(o=>`<button type="button" data-v="${o.v}" aria-pressed="${lead.mood===o.v}" title="${o.ja}">${o.sym}</button>`).join('')}<button type="button" data-sabi aria-pressed="${sab}">${sab?'★ サビ':'☆ サビ'}</button></div>`:''}<button class="pedit" id="pop-edit">${notes?'メモを編集':'メモを書き足す'}</button></div>`;
+    pop.innerHTML=`<div class="pimgs">${m.slice(0,2).map(x=>`<img src="${x.src}" alt="">`).join('')}</div><div class="pb"><span class="pmeta mono">#${it.idx+1} · ${hhmm(lead.ts)} · ${SHELL?'':`${it.bars}小節 · ${it.key} ${SCALE_JA[it.scale]} · `}気分 ${moodJa(lead.mood)}</span>${fix?`<span class="pplace">${placeLine(it)}</span>`:''}<span class="pmemo">${esc(m.map(x=>x.memo).filter(Boolean).join(' / ')||'（一言なし）')}</span><span class="pnote">${esc(notes||'帰宅後のメモはまだありません。')}</span>${fix?`<div class="pfix" role="group" aria-label="この地点の気分とサビを直す">気分${MOODS.map(o=>`<button type="button" data-v="${o.v}" aria-pressed="${lead.mood===o.v}" title="${o.ja}">${o.sym}</button>`).join('')}<button type="button" data-sabi aria-pressed="${sab}">${sab?'★ サビ':'☆ サビ'}</button></div>`:''}<button class="pedit" id="pop-edit">${notes?'メモを編集':'メモを書き足す'}</button></div>`;
     $('#pop-edit').addEventListener('click',()=>openEditor(m.find(x=>x.note)||lead));
     if(fix)pop.querySelectorAll('.pfix button').forEach(b=>b.addEventListener('click',()=>popFix(it,b.dataset.sabi!==undefined?{sabi:!sab}:{mood:+b.dataset.v})));
     pop.classList.remove('out');
@@ -2912,7 +2929,17 @@ function renderP3Act(){const wk=cur();$('#p3-style-v').textContent=(STYLES[wk.st
 function openPick(which){const el=which==='len'?$('#len-pick'):$('#style-pick');$('#pick-title').textContent=which==='len'?'曲の長さを変える':'スタイルを変える';
   const b=$('#pick-body');b.innerHTML=`<p style="margin:0 0 8px">${which==='len'?'曲の長さを選ぶと、作り直してはじめから聴けます。':'スタイルは楽器と鳴らし方の着せ替えです。メロディと構成は同じです。'}</p>`;b.appendChild(el);$('#pick').hidden=false}
 function closePick(){const b=$('#pick-body'),home=$('#qz-btns');['#len-pick','#style-pick'].forEach(id=>{const el=$(id);if(el&&el.parentNode===b)home.parentNode.insertBefore(el,home)});$('#pick').hidden=true;if(state.phase===3)renderP3Act()}
-function renderP4(){const ok=FEATURES.research!==false;$('#p4-send').hidden=!ok}
+function renderP4(){const ok=FEATURES.research!==false;$('#p4-send').hidden=!ok;$('#p4-squiz').hidden=FEATURES.quizTools===false}
+/* 感想フォーム（Google フォーム。privacy.md「感想フォーム」）：リンクを開くだけ。アプリからは何も送らず、URL に散歩や人の情報を付けない。
+   URL が空のあいだはボタンを出さない */
+const FEEDBACK_URL='https://forms.gle/FwHXYJEeK1KFtPno6'; // 体験版アンケート（2026-10-31、飯田が作成。zip を送る Dropbox のリンクもフォームの先頭にある）
+function openFeedback(){if(FEEDBACK_URL)window.open(FEEDBACK_URL,'_blank','noopener')}
+/* 見本の散歩でクイズ（2026-10-31、飯田）：知らない景色でも、音だけで場所が分かるかを確かめる。まだクイズをしていない見本の散歩（A→B→C）を開き、
+   「どの場所の音？」を始める。結果はほかのクイズと同じ記録（散歩の列に見本の名前）に入り、展示用に送るの quiz.csv にも入る */
+async function sampleQuiz(){const W=window.TCSamples.WALKS,done=new Set(QZ.log.map(l=>l.walk)),w=W.find(x=>!done.has(x.name))||W[0];
+  $('#menu').hidden=true;if(pl.playing)pause();if(state.walkId!==w.id)setWalk(w.id);if(state.phase!==3)setPhase(3);
+  for(let i=0;i<50&&!(cur().def.id===w.id&&cur().song);i++)await new Promise(r=>setTimeout(r,100));if(!cur().song)return;
+  qzOpen('a');toast(`見本の散歩「${w.name}」でクイズ。知らない景色でも、音で分かるかな？`,3500)}
 function openMenu(){const host=$('#menu-walks');if(!host.firstChild){host.appendChild(document.querySelector('.walks'));const cr=$('#credits');if(cr)host.appendChild(cr)}
   document.querySelector('.walks').style.display='block';renderWalkRow();$('#menu').hidden=false}
 /* てんちゃんのチュートリアル。ページにあった説明（使い方の流れ・3つのステップ・散歩譜・データの扱い）をここに集めた。言葉は実装側の仮決め（要確認） */
@@ -2926,7 +2953,7 @@ const TUT=[
   {say:'まずは きいてみよう！',t:'見本の散歩の曲',v:'',
    x:'<p>写真から、こんな曲ができます。▶ で聴いてみてください（つぎへ進むと止まります）。</p><div id="tut-samples" class="tut-samples"></div><p class="tut-note">見本の曲は、あとでも右上の ≡（メニュー）から聴けます。</p>'},
   {say:'ぜんぶで 4つの ステップだよ。',t:'使い方の流れ',
-   v:'<div class="tv-flow"><span><em>1</em>撮る<small>歩きながら</small></span><span><em>2</em>なおす<small>帰ってから</small></span><span><em>3</em>聴く<small>曲と散歩譜</small></span><span><em>4</em>送る<small>よければ</small></span></div>',
+   v:'<div class="tv-flow"><span><em>1</em>撮る<small>歩きながら</small></span><span><em>2</em>なおす<small>帰ってから</small></span><span><em>3</em>聴く<small>曲と散歩譜</small></span><span><em>4</em>送る<small>よければ協力</small></span></div>',
    x:'<p>画面の上のタブで、いつでも前のステップにもどれます。</p>'},
   {say:'けしきが かわったら、パシャッ！',t:'ステップ1　撮る',v:'<img class="tv-shot" src="assets/tut/step1.jpg" alt="撮る画面">',
    x:'<ul><li><b class="em">風景全体</b>を撮ってね。進む先の道が入ると、もっといいよ。</li><li>一言メモは書かなくても大丈夫（「メモなし」）。</li><li><b class="em">長く歩いた景色ほど、曲でも長く</b>鳴ります。</li><li><b class="em">前に撮った写真も使えます</b>：「写真を選ぶ」からカメラロールの写真を入れられます。</li><li>「♪ 曲を聴く」で、ここまでの曲が聴けます。</li></ul>'},
@@ -2937,10 +2964,12 @@ const TUT=[
   {say:'うえは あるいた じかん、<br>したは きょくの じかん だよ。',t:'散歩譜（曲の設計図）',v:'<img class="tv-wide" src="assets/tut/sanpofu.jpg" alt="散歩譜">',
    x:'<p>聴いたあとは「散歩譜を見る」で、歩いた時間の帯と曲の時間の帯を並べて見られます。どの景色がどの音になったかが分かります。画像や PDF にして保存もできます。</p>'},
   {say:'どんな けしきが どんな おとに なるか、<br>ここで わかるよ。',t:'景色と音',
-   v:`<div class="tv-places">${[['a1-river','開けた自然','ふわっと広がる'],['a6-shrine','囲まれた自然','あたたかい'],['a3-street','開けた街','明るく、少しくだけた'],['a5-alley','囲まれた街','しっとり']].map(([k,a,b])=>`<figure><img src="${TUT_PH(k)}" alt=""><figcaption><b>${a}</b>${b}響き</figcaption></figure>`).join('')}</div>`,
+   v:`<div class="tv-places">${[['a1-river','開けた自然','ふわっと広がる'],['b9-greenway','囲まれた自然','あたたかい'],['a3-street','開けた街','明るく、少し力の抜けた'],['a5-alley','囲まれた街','しっとりした']].map(([k,a,b])=>`<figure><img src="${TUT_PH(k)}" alt=""><figcaption><b>${a}</b>${b}響き</figcaption></figure>`).join('')}</div>`,
    x:'<p>空の輪郭がメロディの高さに、多く写ったもの（木・草・建物）が楽器になります。</p><p><button type="button" class="tut-link" id="tut-guide">風景と音の早見表をひらく</button></p>'},
-  {say:'てんじに きょうりょく してくれたら<br>うれしいな！',t:'データとおわりに',v:'',
-   x:'<ul><li>写真や記録は、このスマホの中だけに保存されます。アプリが外に送ることはありません。</li><li>おわったら、よければ「4 送る」で展示に協力してください（送るかどうかは自由）。</li><li>iPhone は Safari で開いてください（LINE などの中で開くと、記録が消えることがあります）。音が出ないときは、マナーモードを解除してください。</li></ul><p>さあ、やってみよう！</p>'}];
+  {say:'よく きかれる ことだよ。',t:'よくある質問',v:'',
+   x:'<dl class="tut-qa"><dt>夜の景色でもいいの？</dt><dd>いいよ。暗い写真は、夜らしい落ち着いた響きになります。</dd><dt>犬や、物だけを撮ってもいい？</dt><dd>いいよ。ただ音は景色のかたち（空・緑・建物）で決まるので、まわりの景色も一緒に写すと、その場所らしい音になります。</dd><dt>歩いているあいだ、スマホは？</dt><dd>しまって大丈夫。画面を消しても、ほかのアプリを使ってもOK。撮るときに Safari でこのページを開いてね。</dd><dt>前に撮った写真は、まとめて選んでいい？</dt><dd>いいよ。「写真を選ぶ」で何枚でもまとめて選べます。<b class="em">1回の散歩の写真だけ</b>を選んでね（別の日の写真をまぜると、そのあいだも「歩いた時間」になります）。</dd></dl>'},
+  {say:'そつぎょうせいさくに きょうりょく<br>してくれたら うれしいな！',t:'データとおわりに',v:'',
+   x:'<ul><li>写真や記録は、このスマホの中だけに保存されます。データが勝手に外部に送られることはありません。</li><li>おわったら、よければ「4 送る」で卒業制作に協力してください（送るかどうかは自由）。さいごに、アンケート（Google フォーム）にも答えてもらえるとうれしいです。</li><li>iPhone は Safari で開いてください（LINE などの中で開くと、記録が消えることがあります）。音が出ないときは、マナーモードを解除してください。</li></ul><p>さあ、やってみよう！</p>'}];
 let tutI=0;
 var tutPlaying=null; // var：setPlayIcon から先に参照されるため
 function tutSamples(){const host=$('#tut-samples');if(!host)return;const W=window.TCSamples.WALKS;
@@ -2977,12 +3006,15 @@ if(SHELL){document.body.classList.add('shell');
   $('#btn-reorder').addEventListener('click',async()=>{const wk=cur();if(wk.nodes.length<2){toast('写真が2枚以上あると、並べ替えできます');return}await ensureSong(wk);qzOpen('b')});
   $('#p3-style').addEventListener('click',()=>openPick('style'));$('#p3-len').addEventListener('click',()=>openPick('len'));$('#pick-close').addEventListener('click',closePick);
   $('#p3-quiz').addEventListener('click',()=>qzOpen('a'));$('#p3-spf').addEventListener('click',openSanpofuForWalk);
-  $('#p4-send').addEventListener('click',rsOpen);$('#p4-listen').addEventListener('click',()=>setPhase(3));$('#p4-spf').addEventListener('click',()=>{setPhase(3);openSanpofuForWalk()});$('#p4-start').addEventListener('click',()=>{if(pl.playing)pause();$('#start').hidden=false});
+  $('#p4-send').addEventListener('click',rsOpen);$('#p4-squiz').addEventListener('click',sampleQuiz);$('#mn-squiz').addEventListener('click',sampleQuiz);
+  $('#p4-feedback').addEventListener('click',openFeedback);$('#mn-feedback').addEventListener('click',()=>{$('#menu').hidden=true;openFeedback()});$('#p4-feedback').hidden=$('#mn-feedback').hidden=!FEEDBACK_URL;$('#mn-squiz').hidden=FEATURES.quizTools===false;$('#p4-listen').addEventListener('click',()=>setPhase(3));$('#p4-spf').addEventListener('click',()=>{setPhase(3);openSanpofuForWalk()});$('#p4-start').addEventListener('click',()=>{if(pl.playing)pause();$('#start').hidden=false});
   $('#sg-close').addEventListener('click',()=>{if(GUIDE_BACK){const f=GUIDE_BACK;GUIDE_BACK=null;f()}});
   $('#start').hidden=false}
 
 // ステップ30：版の表示と、体験版で開発用のものを隠す
-$('#ver-eyebrow').textContent=VERSION_JA+' · Web版';if(TRIAL)document.title='あなたの散歩が音楽に（体験版 '+TRIAL.version+'）';
+$('#ver-eyebrow').textContent=VERSION_JA+' · Web版';
+// 体験版の画面では、地図の凡例を音楽の言葉（リディアンなど）ではなく場所の性格で出す（体験者の声：言葉が分からない）
+if(SHELL){const mk=document.querySelector('.map-key');if(mk)mk.innerHTML=[['lyd','開けた自然'],['maj','囲まれた自然'],['mix','開けた街'],['min','囲まれた街'],['pen','分類できない']].map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join('')}if(TRIAL)document.title='あなたの散歩が音楽に（体験版 '+TRIAL.version+'）';
 {const b=document.createElement('div');b.className='ver-badge';b.textContent=VERSION_JA;document.body.appendChild(b)}
 if(TRIAL){$('#dev').hidden=true;$('#dev').style.display='none'} // 中の部品はコードが使うので、消さずに隠す（計測画面へのリンクも中にある）
 window.__tc={TRIAL,VERSION_JA,rsOpen,rsMake,rsReceive,RS,jsonFromZip,QZ,pdfFromCanvas,PAGE,setStyle,spfImage,spfComposite,spfOpenFile,viewDoc,SPF,openSanpofu,openSanpofuForWalk,spfSvg,makeSanpofu,songFromSanpofu,fuNumber,store,makeBackup,readBackupFile,restoreBackup,exportBackup,getStatus:()=>walkStatus,importPhotos,intake,loadRealWalk,ensureRealWalk,exportPoint,renderSong,encodeWav,makeZip,exportPair,exportCurrent,renderEffects,state,cur,compose,FEATURES,PARAM,setFeature,audition,stopAudition,aud,askDelete,deleteNode};
