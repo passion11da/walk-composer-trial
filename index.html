@@ -252,7 +252,7 @@ body.spf-open{overflow:hidden}
 .sguide{position:absolute;inset:0;z-index:21;background:var(--sheet);display:flex;flex-direction:column}
 .sg-h{display:flex;justify-content:space-between;align-items:center;padding:34px 16px 8px;border-bottom:1px solid var(--line)}
 .sg-h b{font-size:15px}.sg-h button{border:1px solid var(--line);background:none;color:inherit;border-radius:99px;padding:4px 12px;font-size:12px;cursor:pointer}
-.sg-body{overflow:auto;padding:10px 16px 24px;font-size:12px;line-height:1.65}
+.sg-body{overflow:auto;flex:1;min-height:0;padding:10px 16px calc(24px + env(safe-area-inset-bottom,0px));font-size:12px;line-height:1.65}
 .sg-body h4{margin:14px 0 6px;font-size:13px}.sg-body h4:first-child{margin-top:4px}
 .sg-body .sg-row{display:grid;grid-template-columns:12px 1fr auto;gap:4px 8px;align-items:start;padding:5px 0;border-bottom:1px dashed var(--line)}
 .sg-body .sg-row i{width:12px;height:12px;border-radius:3px;margin-top:4px}
@@ -293,7 +293,7 @@ body.spf-open{overflow:hidden}
 .shell-only{display:none!important}
 body.shell .shell-only:not([hidden]){display:revert!important}
 body.shell .tabs.shell-only{display:flex!important}
-body.shell .start.shell-only:not([hidden]),body.shell .tut.shell-only:not([hidden]){display:flex!important}
+body.shell .start.shell-only:not([hidden]),body.shell .tut.shell-only:not([hidden]),body.shell .sguide.shell-only:not([hidden]){display:flex!important}
 body.shell .p3-act.shell-only{display:grid!important}
 body.shell .ver-badge,body.shell .top,body.shell .walks,body.shell nav.steps,body.shell .caption,body.shell .notes>section,body.shell .island,body.shell .status{display:none!important}
 body.shell .wrap{display:block}body.shell .stage{display:block}body.shell .phone-col{position:static}
@@ -323,6 +323,8 @@ body.shell #pick #len-pick,body.shell #pick #style-pick{display:flex!important;j
 #menu-walks .walk-tools{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px}
 #menu-walks .store-note{font-size:11px;color:var(--mute)}
 #menu-walks details{margin-top:10px}
+/* てんちゃんが出る画面は白地（2026-10-31、飯田：「てんちゃんと背景が同化するから白地のほうがいいかも」）。暗い表示でも明るい色のまま */
+.start,.tut{--sheet:#FFFFFF;--ink:#18241F;--mute:#5A6862;--line:#C6D0C5;--soft:#EEF2EC;--route:#2B50C8;color:var(--ink);color-scheme:light}
 .start{position:absolute;inset:0;z-index:40;background:var(--sheet);align-items:center;justify-content:center;text-align:center;padding:24px}
 .start-in{display:grid;gap:12px;justify-items:center;max-width:300px}
 .start-img{width:110px;height:auto}
@@ -335,20 +337,37 @@ body.shell #pick #len-pick,body.shell #pick #style-pick{display:flex!important;j
 .tut-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .tut-dots{display:flex;gap:5px}.tut-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.tut-dots i.on{background:var(--route)}
 .tut-skip{border:0;background:none;color:var(--route);font-size:13px;cursor:pointer;min-height:44px}
+.tut-vis{flex:none;height:min(40vh,320px);display:flex;align-items:center;justify-content:center;margin:2px 0 4px}
+.tut-vis[hidden]{display:none}
+.tv-shot{height:100%;width:auto;border-radius:14px;border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.tv-wide{max-width:100%;max-height:100%;border-radius:10px;border:1px solid var(--line)}
+.tv-collage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;height:100%}.tv-collage img{width:100%;height:100%;object-fit:cover;border-radius:10px;min-height:0}
+.tv-note{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:var(--route);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.tv-flow{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.tv-flow span{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:14px;padding:14px 6px;font-size:17px;font-weight:700}
+.tv-flow em{font-style:normal;font-family:var(--f-mono);background:var(--route);color:#fff;border-radius:99px;width:30px;height:30px;display:flex;align-items:center;justify-content:center}.tv-flow small{font-size:12px;font-weight:400;color:var(--mute)}
+.tv-places{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;height:100%}.tv-places figure{margin:0;display:flex;flex-direction:column;min-height:0}.tv-places img{flex:1;min-height:0;width:100%;object-fit:cover;border-radius:10px}
+.tv-places figcaption{font-size:11px;line-height:1.4;padding-top:2px}.tv-places figcaption b{display:block;font-size:13px}
+.tut-body b.em{display:inline;font-size:inherit;font-family:inherit;margin:0}
 .tut-main{display:flex;align-items:flex-end;gap:8px;margin-top:4px}
-.tut-img{width:84px;height:auto;flex:none}
-.tut-bubble{position:relative;background:var(--soft);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.6;margin-bottom:30px}
+.tut-img{width:56px;height:auto;flex:none}
+.tut-bubble{position:relative;background:var(--soft);border-radius:14px;padding:8px 12px;font-size:14px;line-height:1.55;margin-bottom:16px}
 .tut-body{flex:1;overflow:auto;margin-top:6px;font-size:13px;line-height:1.75}
 .tut-body b{display:block;font-size:16px;margin-bottom:4px;font-family:var(--f-display)}
 .tut-body ol,.tut-body ul{margin:4px 0;padding-left:1.3em}.tut-body li{margin:3px 0}
 .tut-body .tut-flow{display:grid;gap:6px;margin:6px 0}
 .tut-body .tut-flow span{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
 .tut-body .tut-flow em{font-style:normal;font-family:var(--f-mono);background:var(--route);color:#fff;border-radius:99px;min-width:22px;text-align:center}
+.tut-samples{display:grid;gap:8px;margin:8px 0}
+.tut-smp{border:1px solid var(--line);border-radius:12px;padding:8px}
+.tut-smp-ph{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.tut-smp-ph img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block}
+.tut-smp-t{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}.tut-smp-t b{display:inline!important;font-size:13px!important;font-family:var(--f-body)!important;margin:0!important}
+.tut-smp-t button{min-height:40px;min-width:88px;border-radius:99px;border:0;background:var(--route);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.tut-note{font-size:12px;color:var(--mute)}
 .tut-nav{display:flex;gap:8px;margin-top:8px}
 .tut-nav button{flex:1;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font-size:15px;cursor:pointer}
 .tut-nav button.main{background:var(--route);border-color:var(--route);color:#fff;font-weight:700}
-.p4-in{display:flex;gap:10px;align-items:center;padding:6px 18px}
-.p4-img{width:80px;height:auto}.p4-say{margin:0;font-size:14px;line-height:1.7}
+.p4-in{display:flex;gap:10px;align-items:center;padding:10px 18px;margin:6px 0 12px;background:#fff;color:#18241F}
+.p4-img{width:80px;height:auto;flex:none}.p4-say{margin:0;font-size:14px;line-height:1.7}
 .p4-more{display:grid;gap:6px;padding:0 18px 20px}
 .p4-more button{min-height:44px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:12px;font-size:14px;cursor:pointer}
 #scr-4{overflow:auto}
@@ -545,7 +564,7 @@ tr.click:hover td{background:var(--soft)}
           </div>
           <div class="memo" id="memo" hidden>
             <img id="memo-img" alt="撮影した写真">
-            <label for="memo-in">一言だけ（あとで書き足せます）</label>
+            <label for="memo-in">一言だけ（書かなくてもよい・あとで書き足せます）</label>
             <input id="memo-in" maxlength="24" placeholder="例：急に空が広い" autocomplete="off">
             <label id="memo-mood-l">いまの気分（すべらせて選ぶ。入れなくてもよい）</label>
             <div class="mood-pick" id="memo-mood" role="group" aria-labelledby="memo-mood-l"></div>
@@ -568,7 +587,7 @@ tr.click:hover td{background:var(--soft)}
           <div class="mood-tools"><span>気分の線（点を上下にドラッグ）</span><label><input type="checkbox" id="mood-off"> 気分を使わない</label><span id="sabi-cand"></span></div>
           <div class="tlw" id="tlw"><div class="mood-row" id="mood-row" aria-label="気分の線"></div><div class="tl" id="timeline"></div></div>
           <div class="detail" id="detail"></div>
-          <button class="cta2 shell-only" id="btn-reorder">思い出しテスト：歩いた順に並べ替え</button>
+          <button class="cta2 shell-only" id="btn-reorder">並べ替え：写真を歩いた順に</button>
           <button class="cta" id="btn-compose">この散歩を作曲する（約3分）</button>
         </section>
 
@@ -592,7 +611,7 @@ tr.click:hover td{background:var(--soft)}
             <div class="style-pick" id="style-pick" role="radiogroup" aria-label="曲のスタイル"></div>
             <div class="p3-act shell-only" id="p3-act"><button type="button" id="p3-style">スタイルを変える<small id="p3-style-v"></small></button><button type="button" id="p3-len">曲の長さを変える<small id="p3-len-v"></small></button><button type="button" id="p3-quiz">クイズ<small>どの場所の音？</small></button><button type="button" id="p3-spf">散歩譜を見る<small>曲の設計図</small></button></div>
             <div class="spf-btns qz-btns" id="qz-btns"><button type="button" class="spf-btn" id="qz-open-a">クイズ：どの場所の音？</button><button type="button" class="spf-btn" id="qz-open-b">並べ替え：歩いた順は？</button></div>
-            <div class="spf-btns"><button type="button" class="spf-btn" id="rs-open">研究に送る</button><button type="button" class="spf-btn" id="sg-open">風景と音の早見表</button><button type="button" class="spf-btn" id="spf-open">散歩譜を見る</button><button type="button" class="spf-btn" id="spf-open-file2">散歩譜ファイルを開く</button></div>
+            <div class="spf-btns"><button type="button" class="spf-btn" id="rs-open">展示用に送る</button><button type="button" class="spf-btn" id="sg-open">風景と音の早見表</button><button type="button" class="spf-btn" id="spf-open">散歩譜を見る</button><button type="button" class="spf-btn" id="spf-open-file2">散歩譜ファイルを開く</button></div>
           </div>
           <div class="composing" id="composing" hidden>
             <div class="big on">作曲しています</div>
@@ -600,12 +619,12 @@ tr.click:hover td{background:var(--soft)}
           </div>
         </section>
 
-        <!-- PHASE 4（2026-10-31）：体験のおわり。研究に送る -->
+        <!-- PHASE 4（2026-10-31）：体験のおわり。展示用に送る（もとの名前は「研究に送る」） -->
         <section id="scr-4" class="scr app" hidden>
           <div class="app-h"><div class="eyebrow">4 · おわり</div><h2>おつかれさまでした</h2></div>
-          <p class="app-lead">あなたの散歩の曲ができました。よければ、卒業制作の研究に協力してください。送るかどうかは自由です。</p>
-          <div class="p4-in"><img src="assets/tenchan.png" alt="" class="p4-img"><p class="p4-say">きいてくれて ありがとう！<br>きょくは きみの ものだよ。</p></div>
-          <button class="cta" id="p4-send">研究に送る</button>
+          <p class="app-lead">あなたの散歩の曲ができました。よければ、卒業制作展の展示に協力してください。送るかどうかは自由です。</p>
+          <div class="p4-in"><img src="assets/tenchan.png" alt="" class="p4-img"><p class="p4-say">きいてくれて ありがとう！<br>てんじに きょうりょく してくれたら うれしいな！</p></div>
+          <button class="cta" id="p4-send">展示用に送る</button>
           <div class="p4-more"><button type="button" id="p4-listen">もう一度聴く</button><button type="button" id="p4-spf">散歩譜を見る</button><button type="button" id="p4-start">はじめの画面へ</button></div>
         </section>
         <!-- 加筆エディタ（PHASE 2・3 共通） -->
@@ -642,7 +661,7 @@ tr.click:hover td{background:var(--soft)}
             <div class="sg-body" id="qz-body"></div>
           </div>
           <div class="sguide" id="rs" hidden role="dialog" aria-modal="true" aria-labelledby="rs-title">
-            <div class="sg-h"><b id="rs-title">研究に送る</b><button type="button" id="rs-close">閉じる</button></div>
+            <div class="sg-h"><b id="rs-title">展示用に送る</b><button type="button" id="rs-close">閉じる</button></div>
             <div class="sg-body" id="rs-body"></div>
           </div>
           <!-- スマホ画面だけの構成（2026-10-31）：はじめの二択・てんちゃんの使い方・設定の小窓・メニュー -->
@@ -659,6 +678,7 @@ tr.click:hover td{background:var(--soft)}
           </div>
           <div class="tut shell-only" id="tut" hidden role="dialog" aria-modal="true" aria-labelledby="tut-title">
             <div class="tut-top"><span class="tut-dots" id="tut-dots"></span><button type="button" class="tut-skip" id="tut-skip">とばして はじめる</button></div>
+            <div class="tut-vis" id="tut-vis"></div>
             <div class="tut-main"><img src="assets/tenchan.png" alt="てんちゃん" class="tut-img"><div class="tut-bubble" id="tut-bubble"></div></div>
             <div class="tut-body" id="tut-body"><b id="tut-title"></b><div id="tut-text"></div></div>
             <div class="tut-nav"><button type="button" id="tut-prev">もどる</button><button type="button" class="main" id="tut-next">つぎへ</button></div>
@@ -787,7 +807,7 @@ tr.click:hover td{background:var(--soft)}
             <p class="dev-note">切り替えると、3つの散歩の曲をすべて作り直します。設定はこのブラウザに保存されます。</p>
           </div>
           <div class="blockn">
-            <h4>受け取った zip を開く（ステップ36 研究に送る）</h4>
+            <h4>受け取った zip を開く（ステップ36 展示用に送る）</h4>
             <div class="ex-row"><button class="btn-line" id="rs-recv">受け取った zip を開く</button><input type="file" id="rs-recv-file" accept=".zip,.json,application/zip,application/json" hidden></div>
             <p class="dev-note" id="rs-recv-out">体験者から届いた zip の散歩譜ファイルから曲を作り直し、譜番号が一致するかを出します。</p>
           </div>
@@ -827,7 +847,7 @@ tr.click:hover td{background:var(--soft)}
   <div class="spf-detail" id="spf-detail" hidden></div>
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
-<script>window.TC_TRIAL={"version": "1.0.2", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
+<script>window.TC_TRIAL={"version": "1.0.3", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -876,7 +896,7 @@ const FEATURE_LIST=[
   {id:'sabi',name:'14 サビ（最大2か所）',off:'サビの指定を音に使わない（今までの曲）'},
   {id:'sabiAsk',name:'ex9 サビの作曲前の3択・3か所目でどれを外すか聞く',off:'サビを選ばずに作曲するときは短い知らせだけ。3か所目は選べない（今まで）'},
   {id:'appShell',name:'スマホ画面だけの構成（はじめの二択・てんちゃんの使い方・画面の中のステップ切り替え・フェーズ4）',off:'今までのページ（説明の列・散歩のカード・ステップの帯がページに並ぶ）'},
-  {id:'research',name:'36 研究に送る（同意・選べる中身・zip・共有）',off:'再生画面に「研究に送る」を出さない'},
+  {id:'research',name:'36 展示用に送る（同意・選べる中身・zip・共有）',off:'再生画面に「展示用に送る」を出さない'},
   {id:'quizTools',name:'28 検証の道具（どの場所？クイズ・並べ替え・結果の CSV）',off:'再生画面にクイズと並べ替えのボタンを出さない'},
   {id:'soundGuide',name:'風景と音の早見表（体験会・展示の説明）',off:'再生画面に早見表のボタンを出さない'},
   {id:'spfPdf',name:'ex8 展示ボード用の散歩譜を PDF でも保存',off:'展示ボード用も PNG だけ（今まで）'},
@@ -1424,9 +1444,13 @@ async function compose(raw,opts={}){
 /* ---------- ステップ21a 散歩譜のデータと譜番号（統合仕様書 v1.2 第3章 3-2・3-3） ---------- */
 // 作曲の仕組みの版（algorithm.md の版と同じ番号）。音を決める処理を変えたら上げる。版が違うと、同じ散歩譜からでも曲が変わることがある
 const ALGO_VERSION='0.43',ALGO_DATE='2026-10-28';
-const SANPOFU_FORMAT=1,APP_VERSION=(TRIAL?'timelapse-composer trial '+TRIAL.version:'timelapse-composer dev '+ALGO_DATE)+' (algorithm v'+ALGO_VERSION+')';
+// 開発版の日付（画面や散歩譜の「開発版 YYYY-MM-DD」。開発版を更新するたびに変える）
+const DEV_DATE='2026-10-31';
+const SANPOFU_FORMAT=1,APP_VERSION=(TRIAL?'timelapse-composer trial '+TRIAL.version:'timelapse-composer dev '+DEV_DATE)+' (algorithm v'+ALGO_VERSION+')';
+// 散歩譜に書く版（アプリの版を日本語に）。読み込んだファイルはその中の版を使う
+function appVerJa(app){const t=/trial (\S+)/.exec(app||''),d=/dev (\S+)/.exec(app||'');return t?'体験版 '+t[1]:d?'開発版 '+d[1]:''}
 // 画面の版の表示（v1.5 2-1）：体験版「体験版 1.0（作曲 0.43）」、開発版「開発版（作曲 0.43）」
-const VERSION_JA=(TRIAL?`体験版 ${TRIAL.version}`:'開発版')+`（作曲 ${ALGO_VERSION}）`;
+const VERSION_JA=(TRIAL?`体験版 ${TRIAL.version}`:`開発版 ${DEV_DATE}`)+`（作曲 ${ALGO_VERSION}）`;
 // 譜番号：音の予定表（鳴らす音すべての項目）を決まった順に並べて SHA-256、先頭8文字を XXXX-XXXX に
 const canonNum=v=>typeof v==='number'?Math.round(v*1e6)/1e6:v;
 function canonEvents(events){
@@ -1577,7 +1601,7 @@ function spfTrack(view,bw){
 }
 function spfHeader(view){
   const {song,meta}=view,sabiN=song.items.filter((it,i)=>it.sabi&&!(song.items[i-1]&&song.items[i-1].sabi)).length;
-  return`<div class="spf-h"><div><b>${esc(meta.name)}</b><span>${meta.date?esc(meta.date)+' · ':''}${song.items.length}地点 · 曲の長さ ${clock(sDur(song))} · 気分 ${song.items.some(it=>it.members.some(m=>typeof m.mood==='number'))&&!meta.moodOff&&song.features.mood!==false?'あり':'なし'} · サビ ${sabiN?sabiN+'か所':'なし'} · スタイル ${(STYLES[song.style||'mellow']||STYLES.mellow).ja}</span></div><div class="spf-no" title="譜番号：この散歩と選び方から生まれた、ただ1つの曲の番号">譜番号 <b class="mono">${view.fu||'…'}</b> <span class="spf-ver">作曲の仕組み v${view.doc&&view.doc.algorithmVersion?esc(view.doc.algorithmVersion):ALGO_VERSION}</span>${view.match?`<small class="${view.match.ok?'ok':'ng'}">${view.match.text}</small>`:''}</div></div>`;
+  return`<div class="spf-h"><div><b>${esc(meta.name)}</b><span>${meta.date?esc(meta.date)+' · ':''}${song.items.length}地点 · 曲の長さ ${clock(sDur(song))} · 気分 ${song.items.some(it=>it.members.some(m=>typeof m.mood==='number'))&&!meta.moodOff&&song.features.mood!==false?'あり':'なし'} · サビ ${sabiN?sabiN+'か所':'なし'} · スタイル ${(STYLES[song.style||'mellow']||STYLES.mellow).ja}</span></div><div class="spf-no" title="譜番号：この散歩と選び方から生まれた、ただ1つの曲の番号">譜番号 <b class="mono">${view.fu||'…'}</b> <span class="spf-ver">${esc(appVerJa(view.doc&&view.doc.appVersion||APP_VERSION)||'版の記録なし')} · 作曲の仕組み v${view.doc&&view.doc.algorithmVersion?esc(view.doc.algorithmVersion):ALGO_VERSION}</span>${view.match?`<small class="${view.match.ok?'ok':'ng'}">${view.match.text}</small>`:''}</div></div>`;
 }
 function spfLegend(){
   const pl=Object.keys(PLACES).map(k=>`<span><svg width="18" height="12">${spfDefs(false)}${spfFill(k,0,0,18,12,false)}</svg>${PLACES[k].ja}</span>`).join('');
@@ -1936,7 +1960,7 @@ function tick(){
 function pause(){pl.token++;if(!pl.playing)return;pl.playing=false;clearInterval(pl.timer);pl.pos=clamp(AC.currentTime-pl.start,0,sDur(playSong()));stopAll();master.gain.cancelScheduledValues(AC.currentTime);setPlayIcon()}
 function seekTo(p){const was=pl.playing;if(was)pause();pl.pos=clamp(p,0,sDur(playSong()));renderPos(pl.pos);if(was)play()}
 function frame(){if(!pl.playing)return;if(!pl.drag)renderPos(clamp(AC.currentTime-pl.start,0,sDur(playSong())));requestAnimationFrame(frame)}
-function setPlayIcon(){$('#play').innerHTML=pl.playing?'<svg width="18" height="18" viewBox="0 0 18 18"><rect x="3" y="2" width="4" height="14" rx="1" fill="currentColor"/><rect x="11" y="2" width="4" height="14" rx="1" fill="currentColor"/></svg>':'<svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 2.5v13l11-6.5z" fill="currentColor"/></svg>';$('#play').setAttribute('aria-label',pl.playing?'一時停止':'再生');setListenIcon();spfPlayIcon()}
+function setPlayIcon(){if(typeof tutPlaying!=='undefined'&&tutPlaying&&!$('#tut').hidden)tutSamples();$('#play').innerHTML=pl.playing?'<svg width="18" height="18" viewBox="0 0 18 18"><rect x="3" y="2" width="4" height="14" rx="1" fill="currentColor"/><rect x="11" y="2" width="4" height="14" rx="1" fill="currentColor"/></svg>':'<svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 2.5v13l11-6.5z" fill="currentColor"/></svg>';$('#play').setAttribute('aria-label',pl.playing?'一時停止':'再生');setListenIcon();spfPlayIcon()}
 
 /* ---------- 散歩の切り替え ---------- */
 const strip=song=>`<span class="strip" title="曲の構成（色＝調、幅＝小節数）">${song?song.items.map(it=>`<i style="flex:${it.bars};background:${SCALE_COL[it.scale]}"></i>`).join(''):''}</span>`;
@@ -2479,7 +2503,7 @@ const RS={blob:null,name:''};
 function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blob=null;
   const hasQ=QZ.log.length>0,hasMemo=wk.nodes.some(n=>n.memo||n.note);
   const opt=(id,label,sub,on,dis)=>`<label class="rs-opt"><input type="checkbox" id="rs-${id}" ${on?'checked':''} ${dis?'disabled':''}><span>${label}${sub?`<small>${sub}</small>`:''}</span></label>`;
-  $('#rs-body').innerHTML=`<p>この散歩のデータを、卒業制作の研究のために、制作者（飯田）に送れます。送るかどうかは自由です。</p>
+  $('#rs-body').innerHTML=`<p>この散歩のデータを、卒業制作展の展示のために、制作者（飯田）に送れます。送るかどうかは自由です。</p>
     <div class="rs-sec">送るもの</div>
     ${opt('doc','散歩譜ファイル（かならず入ります）','これだけで同じ曲を作り直せます。写真そのものや位置の数字は入りません',true,true)}
     ${opt('photo','写真','長い辺 1024 画素まで。撮った場所などの情報は消してから入れます',true)}
@@ -2892,19 +2916,43 @@ function renderP4(){const ok=FEATURES.research!==false;$('#p4-send').hidden=!ok}
 function openMenu(){const host=$('#menu-walks');if(!host.firstChild){host.appendChild(document.querySelector('.walks'));const cr=$('#credits');if(cr)host.appendChild(cr)}
   document.querySelector('.walks').style.display='block';renderWalkRow();$('#menu').hidden=false}
 /* てんちゃんのチュートリアル。ページにあった説明（使い方の流れ・3つのステップ・散歩譜・データの扱い）をここに集めた。言葉は実装側の仮決め（要確認） */
+/* てんちゃんのチュートリアル（スライド）。各ページ：上に絵（アプリの画面・見本の写真）、てんちゃんの一言、短い説明。
+   絵の画面写真は assets/tut/（見本の散歩 A で撮った体験版の画面）。景色と音の4枚は、見本の写真をアプリが実際に分けた結果。言葉は実装側の仮決め（要確認） */
+const TUT_PH=k=>`samples/${k}.jpg`;
 const TUT=[
-  {say:'ぼく てんちゃん！<br>きみの さんぽを おんがくに するよ。',t:'このアプリでできること',x:'<p>歩きながら、景色が変わったと思った所で写真を撮ります。帰ってから少しなおすと、<b style="display:inline;font-size:inherit;font-family:inherit">その散歩だけの曲</b>ができます。</p><p>どんな道からも音楽は生まれます。有名な場所かどうかではなく、見た目のかたち（空の広さ、緑や建物の多さ、空の輪郭）で音が決まります。</p>'},
-  {say:'ぜんぶで 4つの ステップだよ。',t:'使い方の流れ',x:'<div class="tut-flow"><span><em>1</em>撮る：歩きながら、景色を撮る</span><span><em>2</em>なおす：帰ってから、気分やサビを入れる</span><span><em>3</em>聴く：曲を聴いて、散歩をたどり直す</span><span><em>4</em>送る：よければ研究に協力（自由）</span></div><p>画面の上のタブで、いつでも前のステップにもどれます。曲を聴いたあとは「散歩譜」（曲の設計図）も見られます。</p>'},
-  {say:'けしきが かわったら、パシャッ！',t:'ステップ1　撮る',x:'<ul><li><b style="display:inline;font-size:inherit;font-family:inherit">風景全体を入れて</b>撮ってね。進む先の道が入ると、もっといいよ。</li><li>一言だけメモを書いて、スマホはしまって歩きます（気分も選べます）。</li><li>ある写真から次の写真まで<b style="display:inline;font-size:inherit;font-family:inherit">長く歩いた景色ほど、曲の中でも長く</b>鳴ります。</li><li>途中でも「♪ 曲を聴く」で、ここまでの曲が聴けます。</li><li>カメラのかわりに、スマホの中の写真を選んでもよいです。</li></ul>'},
-  {say:'かえったら、すこし なおしてね。',t:'ステップ2　なおす',x:'<ul><li>写真が、歩いた時間の長さで並びます。そのとき感じたことを書き足せます（音には使いません）。</li><li><b style="display:inline;font-size:inherit;font-family:inherit">気分の線</b>：点を上下に動かすと、同じメロディのまま盛り上がり方が変わります。</li><li><b style="display:inline;font-size:inherit;font-family:inherit">サビ</b>：いちばん盛り上げたい場所を2つまで選べます。</li><li>「思い出しテスト」で、写真を歩いた順に並べ替えてみよう。</li></ul>'},
-  {say:'さあ、きいてみよう！',t:'ステップ3　聴く',x:'<ul><li>曲を聴きながら、地図の上の道筋と写真をたどれます。吹き出しから気分やサビを直すと、すぐ聴き直せます。</li><li><b style="display:inline;font-size:inherit;font-family:inherit">スタイル</b>（メロウ・ジャズ・オルゴール・テクノポップ）と<b style="display:inline;font-size:inherit;font-family:inherit">曲の長さ</b>（1・3・5・12分）を変えられます。</li><li><b style="display:inline;font-size:inherit;font-family:inherit">クイズ</b>：曲の一部を聴いて、どの場所の音か当ててみよう。</li></ul>'},
-  {say:'うえは あるいた じかん、<br>したは きょくの じかん だよ。',t:'散歩譜（曲の設計図）',x:'<p>聴いたあとは「散歩譜を見る」で、実際に歩いた時間の帯と、曲の時間の帯を並べて見られます。どの景色が、どの音になったかが分かります。画像やファイルにして保存もできます。</p><p>同じ写真・同じ時刻・同じ選び方からは、いつも同じ曲ができます（散歩譜の「譜番号」が同じになります）。</p>'},
-  {say:'どんな けしきが どんな おとに なるか、<br>ここで わかるよ。',t:'景色と音',x:'<ul><li>開けた自然：ふわっと広がる響き　／　囲まれた自然：あたたかい響き</li><li>開けた街：明るく、少しくだけた響き　／　囲まれた街：しっとりした響き</li><li>空の輪郭がメロディの高さに、線の多さが和音の厚みに、多く写ったもの（木・草・建物）が楽器になります。</li></ul><p><button type="button" class="tut-link" id="tut-guide">風景と音の早見表をひらく</button></p>'},
-  {say:'できた きょくは きみの ものだよ！',t:'データとおわりに',x:'<ul><li>写真や記録は、このスマホの中だけに保存されます。アプリが外に送ることはありません。</li><li>おわったら、よければ「4 送る」で研究に協力してください（送るかどうかは自由）。</li><li>iPhone は Safari で開いてください（LINE などの中で開くと、記録が消えることがあります）。音が出ないときは、マナーモードを解除してください。</li></ul><p>さあ、やってみよう！</p>'}];
+  {say:'ぼく てんちゃん！<br>きみの さんぽを おんがくに するよ。',t:'このアプリでできること',
+   v:`<div class="tv-collage">${['a1-river','a3-street','a5-alley','a6-shrine'].map(k=>`<img src="${TUT_PH(k)}" alt="">`).join('')}<span class="tv-note">♪</span></div>`,
+   x:'<p>歩きながら、景色が変わったと思った所で写真を撮ります。帰ってから少しなおすと、<b class="em">その散歩だけの曲</b>ができます。</p><p>有名な場所かどうかではなく、見た目のかたち（空の広さ、緑や建物の多さ）で音が決まります。</p>'},
+  {say:'まずは きいてみよう！',t:'見本の散歩の曲',v:'',
+   x:'<p>写真から、こんな曲ができます。▶ で聴いてみてください（つぎへ進むと止まります）。</p><div id="tut-samples" class="tut-samples"></div><p class="tut-note">見本の曲は、あとでも右上の ≡（メニュー）から聴けます。</p>'},
+  {say:'ぜんぶで 4つの ステップだよ。',t:'使い方の流れ',
+   v:'<div class="tv-flow"><span><em>1</em>撮る<small>歩きながら</small></span><span><em>2</em>なおす<small>帰ってから</small></span><span><em>3</em>聴く<small>曲と散歩譜</small></span><span><em>4</em>送る<small>よければ</small></span></div>',
+   x:'<p>画面の上のタブで、いつでも前のステップにもどれます。</p>'},
+  {say:'けしきが かわったら、パシャッ！',t:'ステップ1　撮る',v:'<img class="tv-shot" src="assets/tut/step1.jpg" alt="撮る画面">',
+   x:'<ul><li><b class="em">風景全体</b>を撮ってね。進む先の道が入ると、もっといいよ。</li><li>一言メモは書かなくても大丈夫（「メモなし」）。</li><li><b class="em">長く歩いた景色ほど、曲でも長く</b>鳴ります。</li><li><b class="em">前に撮った写真も使えます</b>：「写真を選ぶ」からカメラロールの写真を入れられます。</li><li>「♪ 曲を聴く」で、ここまでの曲が聴けます。</li></ul>'},
+  {say:'かえったら、すこし なおしてね。',t:'ステップ2　なおす',v:'<img class="tv-shot" src="assets/tut/step2.jpg" alt="なおす画面">',
+   x:'<ul><li>写真が、歩いた時間の長さで並びます。感じたことを書き足せます（音には使いません）。</li><li><b class="em">気分の線</b>：点を上下に動かすと、盛り上がり方が変わります。</li><li><b class="em">サビ</b>：いちばん盛り上げたい場所を2つまで。</li><li>「並べ替え」で、写真を歩いた順に並べてみよう。</li></ul>'},
+  {say:'さあ、きいてみよう！',t:'ステップ3　聴く',v:'<img class="tv-shot" src="assets/tut/step3.jpg" alt="聴く画面">',
+   x:'<ul><li>曲を聴きながら、地図の上の道筋と写真をたどれます。</li><li><b class="em">スタイル</b>と<b class="em">曲の長さ</b>を変えられます。</li><li><b class="em">クイズ</b>：曲の一部を聴いて、どの場所の音か当ててみよう。</li></ul>'},
+  {say:'うえは あるいた じかん、<br>したは きょくの じかん だよ。',t:'散歩譜（曲の設計図）',v:'<img class="tv-wide" src="assets/tut/sanpofu.jpg" alt="散歩譜">',
+   x:'<p>聴いたあとは「散歩譜を見る」で、歩いた時間の帯と曲の時間の帯を並べて見られます。どの景色がどの音になったかが分かります。画像や PDF にして保存もできます。</p>'},
+  {say:'どんな けしきが どんな おとに なるか、<br>ここで わかるよ。',t:'景色と音',
+   v:`<div class="tv-places">${[['a1-river','開けた自然','ふわっと広がる'],['a6-shrine','囲まれた自然','あたたかい'],['a3-street','開けた街','明るく、少しくだけた'],['a5-alley','囲まれた街','しっとり']].map(([k,a,b])=>`<figure><img src="${TUT_PH(k)}" alt=""><figcaption><b>${a}</b>${b}響き</figcaption></figure>`).join('')}</div>`,
+   x:'<p>空の輪郭がメロディの高さに、多く写ったもの（木・草・建物）が楽器になります。</p><p><button type="button" class="tut-link" id="tut-guide">風景と音の早見表をひらく</button></p>'},
+  {say:'てんじに きょうりょく してくれたら<br>うれしいな！',t:'データとおわりに',v:'',
+   x:'<ul><li>写真や記録は、このスマホの中だけに保存されます。アプリが外に送ることはありません。</li><li>おわったら、よければ「4 送る」で展示に協力してください（送るかどうかは自由）。</li><li>iPhone は Safari で開いてください（LINE などの中で開くと、記録が消えることがあります）。音が出ないときは、マナーモードを解除してください。</li></ul><p>さあ、やってみよう！</p>'}];
 let tutI=0;
-function renderTut(){const t=TUT[tutI];$('#tut-bubble').innerHTML=t.say;$('#tut-title').textContent=t.t;$('#tut-text').innerHTML=t.x;
+var tutPlaying=null; // var：setPlayIcon から先に参照されるため
+function tutSamples(){const host=$('#tut-samples');if(!host)return;const W=window.TCSamples.WALKS;
+  host.innerHTML=W.map(w=>`<div class="tut-smp"><div class="tut-smp-ph">${w.nodes.filter((n,i)=>i<4).map(n=>`<img src="samples/${n.p}.jpg" alt="">`).join('')}</div><div class="tut-smp-t"><b>${esc(w.name)}</b><button type="button" data-w="${w.id}">${tutPlaying===w.id&&pl.playing?'■ とめる':'▶ 聴く'}</button></div></div>`).join('');
+  host.querySelectorAll('button[data-w]').forEach(b=>b.addEventListener('click',()=>tutPlay(b.dataset.w)))}
+async function tutPlay(id){if(tutPlaying===id&&pl.playing){pause();tutPlaying=null;tutSamples();return}
+  if(pl.playing)pause();tutPlaying=id;if(state.walkId!==id)setWalk(id);if(state.phase!==3)setPhase(3);pl.pos=0;
+  for(let i=0;i<50&&!cur().song;i++)await new Promise(r=>setTimeout(r,100));if(tutPlaying!==id||$('#tut').hidden)return;await play();tutSamples()}
+function tutStop(){if(tutPlaying){if(pl.playing)pause();tutPlaying=null}}
+function renderTut(){const t=TUT[tutI];tutStop();const vis=$('#tut-vis');vis.innerHTML=t.v||'';vis.hidden=!t.v;$('#tut-bubble').innerHTML=t.say;$('#tut-title').textContent=t.t;$('#tut-text').innerHTML=t.x;
   $('#tut-dots').innerHTML=TUT.map((_,i)=>`<i class="${i===tutI?'on':''}"></i>`).join('');$('#tut-prev').disabled=tutI===0;$('#tut-next').textContent=tutI===TUT.length-1?'はじめる':'つぎへ';
-  const g=$('#tut-guide');if(g)g.addEventListener('click',()=>{$('#tut').hidden=true;openGuide(()=>{$('#tut').hidden=false})});$('#tut-body').scrollTop=0}
+  tutSamples();const g=$('#tut-guide');if(g)g.addEventListener('click',()=>{$('#tut').hidden=true;openGuide(()=>{$('#tut').hidden=false})});$('#tut-body').scrollTop=0}
 function openTut(){tutI=0;$('#start').hidden=true;$('#menu').hidden=true;renderTut();$('#tut').hidden=false;$('#tut-next').focus()}
 function openGuide(onClose){if(!cur().song){ensureSong(cur()).then(()=>openGuide(onClose));return}renderSoundGuide();$('#sguide').hidden=false;GUIDE_BACK=onClose||null}
 let GUIDE_BACK=null;
@@ -2921,6 +2969,9 @@ if(SHELL){document.body.classList.add('shell');
   $('#menu-walks').addEventListener('click',e=>{if(e.target.closest('.walk[data-w],#walk-add'))setTimeout(()=>{$('#menu').hidden=true;renderTabs()},50)});$('#tab-menu').addEventListener('click',openMenu);$('#menu-close').addEventListener('click',()=>{$('#menu').hidden=true});
   $('#mn-tut').addEventListener('click',openTut);$('#mn-guide').addEventListener('click',()=>{$('#menu').hidden=true;openGuide()});$('#mn-spf-file').addEventListener('click',()=>{$('#menu').hidden=true;$('#spf-file').click()});$('#mn-start').addEventListener('click',()=>{$('#menu').hidden=true;if(pl.playing)pause();$('#start').hidden=false});
   $('#st-try').addEventListener('click',startTry);$('#st-tut').addEventListener('click',openTut);
+  {let sx=null,sy=0;const tut=$('#tut');tut.addEventListener('touchstart',e=>{const p=e.touches[0];sx=p.clientX;sy=p.clientY},{passive:true});
+   tut.addEventListener('touchend',e=>{if(sx===null)return;const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;sx=null;if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.5)return;
+     if(dx<0&&tutI<TUT.length-1){tutI++;renderTut()}else if(dx>0&&tutI>0){tutI--;renderTut()}})}
   $('#tut-skip').addEventListener('click',startTry);$('#tut-prev').addEventListener('click',()=>{if(tutI>0){tutI--;renderTut()}});$('#tut-next').addEventListener('click',()=>{if(tutI<TUT.length-1){tutI++;renderTut()}else startTry()});
   $('#btn-listen3').addEventListener('click',listenFrom1);$('#btn-compose').textContent='曲を作って聴く（3 聴く）';$('#btn-listen').style.display='none';
   $('#btn-reorder').addEventListener('click',async()=>{const wk=cur();if(wk.nodes.length<2){toast('写真が2枚以上あると、並べ替えできます');return}await ensureSong(wk);qzOpen('b')});
