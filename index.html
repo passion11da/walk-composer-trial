@@ -913,7 +913,7 @@ tr.click:hover td{background:var(--soft)}
   <div class="spf-detail" id="spf-detail" hidden></div>
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
-<script>window.TC_TRIAL={"version": "1.0.6", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false}};</script>
+<script>window.TC_TRIAL={"version": "1.0.7", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -2642,9 +2642,11 @@ function renderPos(p){
 /* ステップ36 研究に送る（spec.md 10.0・privacy.md。2026-10-31）：サーバーは持たない。体験者が送るものを選び、同意すると zip を1つ作り、
    スマホの共有か保存で、自分で制作者に送る（送り先はアプリに書かない）。散歩譜ファイル（必ず）で同じ曲を作り直せる。
    写真はアプリが保存している縮めた写真を描き直して入れる（位置などの付加情報 EXIF は残らない）。緯度・経度は入れない。
-   名前・属性・年代・地域は任意で、同意の記録だけに入れる（音にもシード値にも使わない）。選ぶものの最初の状態は実装側の仮決め（要確認） */
+   名前・属性・年代・地域は任意で、同意の記録だけに入れる（音にもシード値にも使わない）。選ぶものは最初から全部オン（2026-11-05、飯田） */
 const RS_ATTR=['学生','会社員','主婦・主夫','自営業','そのほか'],RS_AGE=['10代','20代','30代','40代','50代','60代以上'];
 const RS={blob:null,name:'',pre:null,waiting:false,t:0};
+// 送るものは、最初から全部オン（2026-11-05、飯田：「どこを押せばいいの」と聞かれたため。外したいものだけ外す）。この散歩にないもの（メモ・クイズの結果）は押せない
+// 曲の WAV は送るものから外した（2026-11-05、飯田：欲しいのは写真と散歩譜。散歩譜ファイルから同じ曲を作り直せる）。WAV を作る処理は、選ぶ欄がないので動かない
 function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blob=null;RS.pre=null;const G3=FEATURES.sendPath!==false;
   const hasQ=QZ.log.length>0,hasMemo=wk.nodes.some(n=>n.memo||n.note);
   const opt=(id,label,sub,on,dis)=>`<label class="rs-opt"><input type="checkbox" id="rs-${id}" ${on?'checked':''} ${dis?'disabled':''}><span>${label}${sub?`<small>${sub}</small>`:''}</span></label>`;
@@ -2652,10 +2654,9 @@ function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blo
     <div class="rs-sec">送るもの</div>
     ${opt('doc','散歩譜ファイル（かならず入ります）','これだけで同じ曲を作り直せます。写真そのものや位置の数字は入りません',true,true)}
     ${opt('photo','写真','長い辺 1024 画素まで。撮った場所などの情報は消してから入れます',true)}
-    ${opt('track','歩いた道の形','地図や位置の数字は入りません（形だけ）',false)}
-    ${opt('clock','撮った時刻','入れないときは「歩き始めから何分」だけになります',false)}
-    ${opt('memo','一言とメモ',hasMemo?'':'（この散歩にはありません）',false,!hasMemo)}
-    ${opt('wav','曲の音声ファイル（WAV）','大きなファイルです。なくても曲は作り直せます',false)}
+    ${opt('track','歩いた道の形','地図や位置の数字は入りません（形だけ）',true)}
+    ${opt('clock','撮った時刻','入れないときは「歩き始めから何分」だけになります',true)}
+    ${opt('memo','一言とメモ',hasMemo?'':'（この散歩にはありません）',hasMemo,!hasMemo)}
     ${opt('quiz','クイズ・並べ替えの結果',hasQ?'':'（まだありません）',hasQ,!hasQ)}
     <div class="rs-sec">展示に使う情報（どれも空欄でよい）</div>
     <label class="rs-f">展示に使う名前（ニックネームでよい）<input id="rs-name" autocomplete="off" maxlength="40"></label>
