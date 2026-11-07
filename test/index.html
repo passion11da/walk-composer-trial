@@ -2145,7 +2145,7 @@ function tick(){
 /* G3 案A（2026-11-05）：あなたの散歩の曲を最後まで聴いたら、てんちゃんが「4 送る」へ誘う（その散歩で1回。開いている間だけ覚える） */
 // H5：送ったあとのお礼とアンケート（前は「4 おわり」の画面にあった）
 async function sentThanks(){if(sendV3()){const wk=cur();wk.sentN=(wk.sentN||0)+1;if(isReal(wk))try{saveMeta()}catch(_){}
-    await tenSay({sel:'#p3-send',html:'<p style="margin:0">おくってくれて ありがとう！<br>なんかい おくっても だいじょうぶ。いっぱい おくってくれたら うれしいな。</p>',buttons:[['close','とじる',true]]});return}
+    await tenSay({sel:'#p3-send',html:'<p style="margin:0">おくってくれて ありがとう！<br>ひとり なんかい おくっても だいじょうぶだから、いっぱい おくってくれたら うれしいな。</p>',buttons:[['close','とじる',true]]});return}
   const v=await tenSay({sel:'#p3-send',html:'<p style="margin:0">おくってくれて ありがとう！<br>アンケートにも こたえてくれると うれしいな。</p>',buttons:[...(FEEDBACK_URL?[['form','アンケートに答える',true]]:[]),['close','とじる']]});if(v==='form')openFeedback()}
 async function songEnded(){const wk=cur();
   if(!SHELL||FEATURES.sendPath===false||FEATURES.research===false||state.phase!==3||pl.songOverride||!isReal(wk)||wk.askedSend)return;wk.askedSend=true;
