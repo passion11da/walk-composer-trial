@@ -122,6 +122,8 @@ body.shell #btn-finish{background:#fff;color:#18241F;font-weight:700;min-height:
 .cam-help{animation:camArrowUp 1.2s ease-in-out infinite}.cam-help::after{content:"";position:absolute;right:31px;bottom:100%;border:9px solid transparent;border-bottom-color:#fff}
 @keyframes camArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}@keyframes camArrowUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .cam-tip[hidden],.cam-help[hidden]{display:none}
+/* 2026-11-11：「わからなくなったら この ？」の札はタブより上に出すので、早見表・メニューなどの小窓より上にも出てしまう。小窓が開いているあいだは隠す（:has が使えない古いブラウザでは今までどおり） */
+body.shell .screen:has(.sguide:not([hidden]),.confirm:not([hidden]),.editor:not([hidden])) .cam-help.shell-only{display:none!important} /* 体験版の画面の「表示する」決まり（!important）より強く */
 /* F5 はじめての人の吹き出し：画面を暗くして、次に押す所だけを明るく残す */
 .coach{position:fixed;inset:0;z-index:60}.coach[hidden]{display:none}
 .coach-hole{position:fixed;border-radius:14px;box-shadow:0 0 0 200vmax rgba(0,0,0,.62);pointer-events:none;transition:all .25s}
@@ -986,7 +988,7 @@ tr.click:hover td{background:var(--soft)}
   <div class="spf-detail" id="spf-detail" hidden></div>
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
-<script>window.TC_TRIAL={"version": "1.0.8", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false}};</script>
+<script>window.TC_TRIAL={"version": "1.0.9", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": true, "cloud": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": true, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -3417,7 +3419,10 @@ function renderTut(){const t=TUT[tutI];tutStop();const vis=$('#tut-vis');vis.inn
   $('#tut-dots').innerHTML=TUT.map((_,i)=>`<i class="${i===tutI?'on':''}"></i>`).join('');$('#tut-prev').disabled=tutI===0;$('#tut-next').textContent=tutI===TUT.length-1?'はじめる':'つぎへ';
   tutSamples();const g=$('#tut-guide');if(g)g.addEventListener('click',()=>{$('#tut').hidden=true;openGuide(()=>{$('#tut').hidden=false})});$('#tut-body').scrollTop=0}
 function openTut(){tutI=0;$('#start').hidden=true;$('#menu').hidden=true;renderTut();$('#tut').hidden=false;$('#tut-next').focus()}
-function openGuide(onClose){if(!cur().song){ensureSong(cur()).then(()=>openGuide(onClose));return}renderSoundGuide();$('#sguide').hidden=false;GUIDE_BACK=onClose||null}
+/* 2026-11-11 不具合（飯田「早見表を押すとアプリどころか Claude ごと落ちる」。体験版 1.0.9 で直した）：写真が1枚もない散歩（はじめての端末の「あなたの散歩」）で開くと、
+   曲ができない（ensureSong が null を返す）のに「曲ができたら開き直す」をくり返し、止まらずにページが固まっていた（10/31 から）。
+   曲は1回だけ待ち、できなくても（写真がないとき）「この曲の◯%」なしで開く */
+async function openGuide(onClose){const wk=cur();if(!wk.song&&wk.nodes.length){try{await ensureSong(wk)}catch(_){}}renderSoundGuide();$('#sguide').hidden=false;GUIDE_BACK=onClose||null}
 let GUIDE_BACK=null;
 /* 「やってみる」：自分の散歩を、記録の状態に合わせた画面から始める（まだなければ撮る画面から） */
 /* F5（2026-11-03）：はじめて「1 撮る」に来たとき、画面を暗くして次に押す所を1つずつ明るく残し、てんちゃんが説明する。
