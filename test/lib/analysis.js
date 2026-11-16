@@ -23,7 +23,22 @@ const PARAM=Object.freeze({
   DIV_S_MIN:.2, DIV_BINS:12, DARK_V:.35, TEX_BLOCK:8, TEX_NORM:40,
   SKYLINE_COLS:16, SKYLINE_ROW_SKY:.5,
   // ステップ9.1（見直し点①〜⑥。algorithm.md 4.3、指示書 v0.6 第3部）
-  CLOUD_S_MAX:.15, CLOUD_V_MIN:.6, PLUCK_MELODY_PROB:.25, MIN_BARS_91:2, BELL_MAX_HZ:2100, UNKNOWN_INTERVAL_SEC:300,
+  CLOUD_S_MAX:.15, CLOUD_V_MIN:.6, SKYX_V_MIN:.5, SKYX_EDGE_MAX:.10, SKYX_BLOCK:8,
+  // 空のそうじ（9.1③。2026-11-11、判断の返事とお手本の AI から。開発用 ON/OFF skyClean）：青い空は、この明るさ以上だけ（晴れた日の日陰の青を外す）
+  SKY_BLUE_V_MIN:.55,
+  // 見通し（9.1④、2026-11-11）：開けている＝空（そうじ後）が写る列が VIEW_SKY_COLS_MIN 以上で、上 1/4 の覆い（空でも植物でもない所）が VIEW_COVER_MAX 未満。列に空が VIEW_COL_MIN（高さの割合）以上あれば「空が写る列」
+  VIEW_SKY_COLS_MIN:.5, VIEW_COVER_MAX:.5, VIEW_COL_MIN:.05,
+  // マスごとの見分け（9.1⑤、2026-11-12）：写真を横 CELL_COLS マスに切り、マスごとに「道・建物・田畑や草・木」を決める。街か自然かは（木＋田畑や草）−（建物＋道）が PLACE_CELL_NAT 以上なら自然
+  CELL_COLS:16, CELL_EDGE_DIV:4,
+  CELL_ROAD_Y_MIN:.6, CELL_ROAD_PLANT_MAX:.04, CELL_ROAD_EDGE_MAX:.6, CELL_ROAD_HV_MIN:.46, CELL_ROAD_SKYDIST_MIN:.16,
+  CELL_BLDG_BLUE_MAX:.15, CELL_BLDG_PLANT_MAX:.5, CELL_BLDG_Y_MAX:.75, CELL_BLDG_SKY_MAX:.5, CELL_BLDG_HV_MAX:.45,
+  CELL_FIELD_PLANT_MIN:.12, CELL_FIELD_Y_MIN:.45, CELL_FIELD_S_MIN:.24, CELL_FIELD_VIEW_MIN:.9, CELL_FIELD_RELV_MIN:.32,
+  CELL_TREE_PLANT_MIN:.34, CELL_TREE_Y_MAX:.55, CELL_TREE_HV_MAX:.71, CELL_TREE_SKYDIST_MIN:.36,
+  PLACE_CELL_NAT:-.12, PLACE_CELL_NAT_SLOPE:1.5,
+  // 枝（9.1⑤）：緑道＝自然の側で道が BRANCH_ROAD_MIN 以上、路地＝道の幅÷左右の建物が BRANCH_DH_ALLEY 未満、田畑や草＝開けた自然で田畑や草のマスが BRANCH_FIELD_MIN 以上
+  BRANCH_ROAD_MIN:.05, BRANCH_DH_ALLEY:4.6, BRANCH_FIELD_MIN:.01,
+  // 暗い木（T-031 ③ 案 E。2026-11-07）：色の薄い緑・暗い葉・暗い所の緑も植物に数える（ON のとき）
+  PLANT_DK_S_MIN:.12, PLANT_DK_V_MIN:.06, PLANT_DK_DARK_V:.25, PLANT_DK_DARK_S_MIN:.06, PLANT_DK_DARK_H_MIN:60, PLUCK_MELODY_PROB:.25, MIN_BARS_91:2, BELL_MAX_HZ:2100, UNKNOWN_INTERVAL_SEC:300,
   // ステップ10：実写真（2026-10-18 相模線 24枚）での調整。開発用 ON/OFF「10 実写真での調整」で使う
   PLANT_H_MIN_10:50, EDGE_NORM_10:.64,
   // 素材は周囲に合わせる・夜（2026-10-20、ユーザーの決定。数値は暫定）
@@ -62,7 +77,12 @@ const PARAM=Object.freeze({
   TREE_V_MAX:.45, GRASS_H_MIN:70, GRASS_H_MAX:110, FLOWER_S_MIN:.5,
   WARM_MAT_H_MIN:10, WARM_MAT_H_MAX:45, WARM_MAT_S_MIN:.25, WARM_MAT_S_MAX:.7, BRIGHT_SURF_V:.75,
   // 場所の性格（3.11、ステップ15）
-  PLACE_OPEN:.5, PLACE_NATURAL:.5, PLACE_KEEP:.05, PLACE_NONE_MAX:.2, PLACE_MIN_MAT:.05, PLACE_KEY_STEP1:.33, PLACE_KEY_STEP2:.66,
+  // ex16 案1（T-035。2026-11-07）：メロディの短いフレーズと、場所の性格ごとの型
+  EX16_STEPS:4, EX16_BASE:60, EX16_TOP:84, EX16_GAIN:.55, EX16_CYCLE_BARS:2, EX16_FLAT:.08, SKYX_Y_MAX:.67,
+  EX16_MOTIF:{openNat:[0,2,4,2],closedNat:[0,1,2,1],openCity:[0,4,0,2],closedCity:[0,0,2,0],none:[0,2,0,2]},
+  // 型：1小節の中で鳴らす位置（秒。1拍＝0.5秒）と長さ
+  EX16_RHYTHM:{openNat:{t:[0,1],d:.95},closedNat:{t:[0,.667,1.333],d:.55},openCity:{t:[.5,1.5],d:.42},closedCity:{t:[0,.5,1,1.5],d:.22},none:{t:[0,1],d:.95}},
+  PLACE_OPEN:.5, PLACE_OPEN_45:.45, PLACE_NATURAL:.5, PLACE_KEEP:.05, PLACE_NONE_MAX:.2, PLACE_MIN_MAT:.05, PLACE_KEY_STEP1:.33, PLACE_KEY_STEP2:.66,
   // 基調音・水・時刻（3.14、ステップ16）
   WATER_MIN:.08, FLOWER_MIN:.03, VOL_DRONE:.05, VOL_RIPPLE:.012, VOL_GLOCK:.02,
   // 曲の頭と終わりのフェード（STEP 8、ステップ11）
@@ -90,7 +110,7 @@ const PARAM=Object.freeze({
   BIG_PHOTO_MAX:1024,
   // 写真の間の上限（秒）。別の日の写真が混ざったとき、これより長い間はこの長さとみなす（2026-10-31、飯田の決定。4時間）。歩いた時間の表示と曲の長さの割り振りに使う
   WALK_GAP_MAX:14400,
-  // 30秒（2026-11-07、T-030。飯田の決定 2026-11-06・11-07：選べる長さに30秒を足すだけ）：総小節数15。地点数の上限7（1地点は最低2小節のため）・フェード1秒と2秒（1分と同じ）は実装側の仮決め（要確認）
+  // 30秒（2026-11-07、T-030。飯田の決定 2026-11-06・11-07：選べる長さに30秒を足すだけ）：総小節数15。地点数の上限7（1地点は最低2小節のため）・フェード1秒と2秒（1分と同じ）。飯田の確認済み（2026-11-07）
   LENGTH_MIN:[.5,1,3,5,12], LENGTH_BARS:[15,30,90,150,360], LENGTH_MAX_NODES:[7,15,22,30,60], LENGTH_FADE_IN:[1,1,2,2,2], LENGTH_FADE_OUT:[2,2,4,4,4],
   // STEP 6 時間 → 小節
   BPM:120, TOTAL_BARS:90, DT_MAX:1200, MERGE_DT:8, MAX_NODES:22, MIN_BARS:4,
@@ -108,6 +128,18 @@ const PARAM=Object.freeze({
   DIV_ADD9:.6, BASS_TOP_GAIN:.3, TEX_GAIN:.012, TEX_BAND_LOW:2000, TEX_BAND_HIGH:6000,
   SKYLINE_STEPS:9, SKYLINE_SKY_MIN:.03,
   REV_BASE:.12, REV_GAIN:.5, REV_MIN:.1, REV_MAX:.6, REV_OFF:.3,
+  // 断面の性質 → 音（T-100、v0.59、2026-11-14。開発用 ON/OFF「secSound」。夜と、見通しの値がない写真では使わない）
+  //   響きの基準：その場所の状態で決める。見晴らし＝空の開き ×（1−上の覆い）。残響に送る量＝SEC_REV_BASE＋SEC_REV_GAIN×見晴らし（開け・狭まりは、そこからの一時の増減。TR_REV）
+  //   左右の迫り：断面の左右の壁の低いほうを見上げる角度（0〜1。1＝写真の上のはし）。左右の広がりを（1−SEC_WIDTH_CUT×迫り）倍に。迫りが SEC_SPREAD_MAX 未満なら和音を開いて並べる
+  //   緑の覆い（自然の側だけ）：上 1/3 の木と上の覆いの小さいほう。音の明るさを（1−SEC_CANOPY_CUT×緑の覆い）倍に（こもる）。SEC_CANOPY_LFO 以上で、ゆるやかな揺れ
+  SEC_REV_BASE:.15, SEC_REV_GAIN:.4, SEC_WIDTH_CUT:.6, SEC_SPREAD_MAX:.25, SEC_CANOPY_CUT:.25, SEC_CANOPY_LFO:.45,
+  // 断面の性質 → 音 その2（T-100、v0.60、2026-11-15。開発用 ON/OFF「secSound2」。secSound が ON のときだけ働く。メロウだけ）
+  //   足もとの硬さ＝道のマス（下の2段。cellRoadBot）× 灰色らしさ − 下 1/3 の植物（footPlant）。−1 やわらかい（草・土）〜 ＋1 硬い（舗装）
+  //     灰色らしさ＝下 1/3 の鮮やかさ（footSat）が SEC_FOOT_SAT_MIN 以下で 1、SEC_FOOT_SAT_MAX 以上で 0（あいだはまっすぐつなぐ）。
+  //     水面は道のマスに数えられやすいが、舗装より色がある（空や岸の色を映す）ので、色のある面は硬さを下げる。境目は調整用の散歩で決めた
+  //     お手本との順位の相関 0.71／0.73。水面を「硬い（0.3 以上）」と読む割合：調整用 48 → 9%、確かめ用 69 → 38%（灰色の水路・曇りの川は残る）
+  //     音の切り方：伴奏の鍵盤・はじく音と旋律の音の長さを（1 − SEC_FOOT_CUT×硬さ ＋ SEC_FOOT_LONG×やわらかさ）倍に（硬いほど短く切る、やわらかいほど長くつなぐ）
+  SEC_FOOT_CUT:.45, SEC_FOOT_LONG:.4, SEC_FOOT_SAT_MIN:.05, SEC_FOOT_SAT_MAX:.4,
   PAN_GAIN:1.5, PAN_MAX:.6,
   // STEP 8 起承転結
   INTRO_END:15, DEV_END:59, CLIMAX_END:75,
@@ -123,10 +155,18 @@ const VALUE_KEYS=['sky','plant','art','edge','open','bright','sat','horizon','pa
   'tree','grass','flower','gray','warmMat','brightSurf','water',
   // 曇り空（ステップ9.1で追加。2026-10-20）
   'cloud','cloudArt','openC','horizonC',
+  // 色を問わない空（9.1②。2026-11-07）
+  'skyX','skyXArt','skyXWarm','openX','horizonX',
+  // 暗い木（T-031 ③ 案 E。2026-11-07）
+  'plantDk','treeDk','grassDk','plantDkArt',
+  // 空のそうじ（9.1③。2026-11-11）
+  'sky2','cloud2','cloudArt2','skyX2','skyXArt2','skyXWarm2','openX2','horizonX2','viewCols','viewCover','cellRoad','cellBldg','cellField','cellTree','cellRoadBot','cellBldgL','cellBldgR',
   // ステップ10（2026-10-20）
   'edgeRaw','plantLo','treeLo','grassLo','flowerLo','artLow','rowRep',
   // ステップ18 1枚の写真の構造（2026-10-28。音はまだ使わない）
-  'sideArt','plantL','plantR','plantC','plantTop','farBand','midBand','nearBand','gateDiff','sideV','centerV','topTree','dapple','colRep','tunnelArt','footArt','footPlant','topNonSky','sideNonSky','centerLowV'];
+  'sideArt','plantL','plantR','plantC','plantTop','farBand','midBand','nearBand','gateDiff','sideV','centerV','topTree','dapple','colRep','tunnelArt','footArt','footPlant','topNonSky','sideNonSky','centerLowV',
+  // 足もとの鮮やかさ（下 1/3 の彩度の平均。T-100 その2、2026-11-15。水面と舗装を分ける手がかり）
+  'footSat'];
 
 /* 音楽の表 */
 const SCALES={lydian:[0,2,4,6,7,9,11],major:[0,2,4,5,7,9,11],mixolydian:[0,2,4,5,7,9,10],minor:[0,2,3,5,7,8,10],penta:[0,3,5,7,10]};
@@ -167,43 +207,47 @@ const ENV_JA={pad:'パッド',keys:'鍵盤',pluck:'プラック'};
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
 /* ---------- STEP 2〜4：画素の配列から値を計算する（画面に依存しない。Web Worker からも使える） ---------- */
-function analyzePixels(d,w,h){
+function analyzePixels(d,w,h,opts){ // opts.masks：画素ごとの分類の印も返す（開発のお手本との比べ用。T-031。値の計算は変えない）
   const K=PARAM,n=w*h,gray=new Float32Array(n),rowSky=new Float32Array(h);
+  let footS=0;const footFrom=2*Math.floor(h/3)*w; // 足もとの鮮やかさ（下 1/3）
   let sky=0,plant=0,art=0,vs=0,vs2=0,ss=0,dark=0,warm=0,cool=0,hl=0,darkTop=0,darkBot=0,hash=2166136261;
   const hueBins=new Float32Array(K.DIV_BINS);let hueN=0;
   const isSky=new Uint8Array(n),bright=new Uint8Array(n);
   let tree=0,grass=0,flower=0,warmMat=0,brightSurf=0,water=0;const half=n/2;
-  let plantLo=0,treeLo=0,grassLo=0,flowerLo=0,artLow=0;const third2=n*2/3; // artLow：下3分の1の無彩色（舗装・砂利など地面） // ステップ10：色相 PLANT_H_MIN_10〜PLANT_H_MIN の植物（実写真の黄緑・オリーブ色・秋の田）
+  let plantLo=0,treeLo=0,grassLo=0,flowerLo=0,artLow=0,plantDk=0,treeDk=0,grassDk=0,plantDkArt=0;const isPlDk=new Uint8Array(n);const third2=n*2/3; // 暗い木（案 E）：plantDk＝今の分けで植物にならない画素のうち、薄い緑・暗い葉・暗い所の緑。 // artLow：下3分の1の無彩色（舗装・砂利など地面） // ステップ10：色相 PLANT_H_MIN_10〜PLANT_H_MIN の植物（実写真の黄緑・オリーブ色・秋の田）
   const cand=new Uint8Array(n),isArt=new Uint8Array(n),lowSat=new Uint8Array(n);
-  const isPl=new Uint8Array(n),isTr=new Uint8Array(n),Vs=new Float32Array(n); // ステップ18：植物・樹木・明度を画素ごとに覚える // ① 曇り空の候補（上半分の、明るく色の薄い画素）
+  const isPl=new Uint8Array(n),isTr=new Uint8Array(n),Vs=new Float32Array(n),isWarmM=new Uint8Array(n),isFl=new Uint8Array(n),isBS=new Uint8Array(n); // isWarmM：暖色の素材の画素（9.1② で使う） // ステップ18：植物・樹木・明度を画素ごとに覚える // ① 曇り空の候補（上半分の、明るく色の薄い画素）
   for(let i=0;i<n;i++){
     const R=d[i*4]/255,G=d[i*4+1]/255,B=d[i*4+2]/255,mx=Math.max(R,G,B),mn=Math.min(R,G,B),dl=mx-mn;
     const v=mx,s=mx?dl/mx:0;let hu=0;Vs[i]=v;
     if(dl){if(mx===R)hu=60*(((G-B)/dl)%6);else if(mx===G)hu=60*((B-R)/dl+2);else hu=60*((R-G)/dl+4)}if(hu<0)hu+=360;
     if(i<half&&s<K.CLOUD_S_MAX&&v>=K.CLOUD_V_MIN)cand[i]=1;
     if(s<K.REP_S_MAX)lowSat[i]=1;
-    if(s<K.ART_S_MAX){if(v>=K.ART_V_MIN&&v<=K.ART_V_MAX){art++;isArt[i]=1;if(i>=third2)artLow++}if(v>=K.BRIGHT_SURF_V&&i>=n/3)brightSurf++} // 明るい面：上3分の1（曇り空・雲）は数えない
+    if(s<K.ART_S_MAX){if(v>=K.ART_V_MIN&&v<=K.ART_V_MAX){art++;isArt[i]=1;if(i>=third2)artLow++}if(v>=K.BRIGHT_SURF_V&&i>=n/3){brightSurf++;isBS[i]=1}} // 明るい面：上3分の1（曇り空・雲）は数えない
     else if(hu>=K.SKY_H_MIN&&hu<=K.SKY_H_MAX&&v>=K.SKY_V_MIN){sky++;rowSky[(i/w)|0]++;isSky[i]=1;if(i>=half)water++}
     else if(hu>=K.PLANT_H_MIN_10&&hu<K.PLANT_H_MIN&&s>=K.PLANT_S_MIN&&v>=K.PLANT_V_MIN){plantLo++;isPl[i]=1;if(v<K.TREE_V_MAX){treeLo++;isTr[i]=1}else grassLo++;
       // 今までの分け方（OFF のとき）では、この画素は花に数えていた（鮮やかなとき）。今までの値が変わらないよう花にも数え、その分を覚えておく
-      if(s>=K.FLOWER_S_MIN&&i>=n/3){flower++;flowerLo++}}
+      if(s>=K.FLOWER_S_MIN&&i>=n/3){flower++;flowerLo++;isFl[i]=1}}
     else if(hu>=K.PLANT_H_MIN&&hu<=K.PLANT_H_MAX&&s>=K.PLANT_S_MIN&&v>=K.PLANT_V_MIN){plant++;isPl[i]=1;if(v<K.TREE_V_MAX){tree++;isTr[i]=1}else if(hu>=K.GRASS_H_MIN&&hu<=K.GRASS_H_MAX)grass++}
-    else if(hu>=K.WARM_MAT_H_MIN&&hu<=K.WARM_MAT_H_MAX&&s>=K.WARM_MAT_S_MIN&&s<=K.WARM_MAT_S_MAX)warmMat++;
-    else if(s>=K.FLOWER_S_MIN&&i>=n/3)flower++;
+    else if(hu>=K.WARM_MAT_H_MIN&&hu<=K.WARM_MAT_H_MAX&&s>=K.WARM_MAT_S_MIN&&s<=K.WARM_MAT_S_MAX){warmMat++;isWarmM[i]=1}
+    else if(s>=K.FLOWER_S_MIN&&i>=n/3){flower++;isFl[i]=1}
+    // 暗い木（案 E）：上の分けで植物（植物・植物Lo）にならなかった画素のうち、(1) 色相 70〜170°・S≧0.12・V≧0.06、(2) 色相 50〜170°・S≧0.20・V≧0.06、(3) V<0.25 で色相 60〜170°・S≧0.06。ON のとき植物に足し、人工物から引く
+    if(!isPl[i]&&v>=K.PLANT_DK_V_MIN&&((hu>=K.PLANT_H_MIN&&hu<=K.PLANT_H_MAX&&s>=K.PLANT_DK_S_MIN)||(hu>=K.PLANT_H_MIN_10&&hu<=K.PLANT_H_MAX&&s>=K.PLANT_S_MIN)||(v<K.PLANT_DK_DARK_V&&hu>=K.PLANT_DK_DARK_H_MIN&&hu<=K.PLANT_H_MAX&&s>=K.PLANT_DK_DARK_S_MIN))){plantDk++;isPlDk[i]=1;if(isArt[i])plantDkArt++;if(v<K.TREE_V_MAX)treeDk++;else grassDk++}
     if(s>=K.WARM_S_MIN){if(hu<=K.WARM_H_MAX||hu>=K.WARM_H_MIN2)warm++;else if(hu>=K.COOL_H_MIN&&hu<=K.COOL_H_MAX)cool++}
     if(v>=K.HIGHLIGHT_V){hl++;bright[i]=1}
     if(s>=K.DIV_S_MIN){hueBins[Math.min(K.DIV_BINS-1,(hu/360*K.DIV_BINS)|0)]++;hueN++}
     if(v<K.DARK_V){if(i<n/2)darkTop++;else darkBot++}
-    vs+=v;vs2+=v*v;ss+=s;if(v<K.SHADOW_V)dark++;gray[i]=(.299*R+.587*G+.114*B)*255;
+    vs+=v;vs2+=v*v;ss+=s;if(i>=footFrom)footS+=s;if(v<K.SHADOW_V)dark++;gray[i]=(.299*R+.587*G+.114*B)*255;
     hash=Math.imul(hash^(((d[i*4]>>4)<<8)|((d[i*4+1]>>4)<<4)|(d[i*4+2]>>4)),16777619)>>>0;
   }
   let edges=0,eL=0,eR=0;const repRows=new Float32Array(Math.floor(h*2/3)); // 横線のくり返し用（2026-10-21）
   const colLines=new Float32Array(w); // ステップ18：縦の線を列ごとに数える（並木・列柱）
+  const XB=K.SKYX_BLOCK,xbw=Math.ceil(w/XB),xbh=Math.ceil(h/XB),blkEdge=new Float32Array(xbw*xbh); // 9.1②：XB×XB の区画ごとの線の数（なめらかさ）
   for(let yy=1;yy<h-1;yy++)for(let xx=1;xx<w-1;xx++){
     const p=(a,b)=>gray[(yy+b)*w+xx+a];
     const gx=-p(-1,-1)-2*p(-1,0)-p(-1,1)+p(1,-1)+2*p(1,0)+p(1,1);
     const gy=-p(-1,-1)-2*p(0,-1)-p(1,-1)+p(-1,1)+2*p(0,1)+p(1,1);
-    if(Math.abs(gx)+Math.abs(gy)>K.SOBEL_T){edges++;if(xx<w/2)eL++;else eR++}
+    if(Math.abs(gx)+Math.abs(gy)>K.SOBEL_T){edges++;if(xx<w/2)eL++;else eR++;blkEdge[((yy/XB)|0)*xbw+((xx/XB)|0)]++}
     if(yy<repRows.length&&lowSat[yy*w+xx]&&Math.abs(gx)+Math.abs(gy)>K.REP_SOBEL_T&&Math.abs(gy)>2*Math.abs(gx))repRows[yy]++;
     if(Math.abs(gx)+Math.abs(gy)>K.REP_SOBEL_T&&Math.abs(gx)>2*Math.abs(gy))colLines[xx]++;
   }
@@ -214,6 +258,8 @@ function analyzePixels(d,w,h){
   const skyR=sky/n,edgeRaw=edges/((w-2)*(h-2));
   // 開放度（簡易版）：空の量と地平線の低さから
   const open=K.OPEN_W_SKY*Math.min(skyR/K.OPEN_SKY_NORM,1)+K.OPEN_W_HORIZON*hz;
+  // ①② 曇り空・色を問わない空は、青い空の印（SK・行ごとの数 rowSK・数 skyN）から求める。2026-11-11：③ 空のそうじで、青い空の印を変えてもう一度通すために関数にした（1回目の計算は今までと同じ）
+  const skyPass=(SK,rowSK,skyN)=>{
   // ① 曇り空（ステップ9.1）：上半分の、明るく（V ≧ CLOUD_V_MIN）色の薄い（S < CLOUD_S_MAX）画素のうち、
   //    写真の上の端から、曇り空の候補だけを通ってつながっているもの（青空を通ってつながるものは数えない）。
   //    白い壁・雪を取り違えないよう、上の端につながることを条件にする。青空の中の白い雲は数えない（青空がすでに空として数えられているため）。実装側の仮決め（要確認）
@@ -223,13 +269,65 @@ function analyzePixels(d,w,h){
     const x=i%w,y=(i/w)|0;for(const j of [x>0?i-1:-1,x<w-1?i+1:-1,y>0?i-w:-1,i+w])if(j>=0&&j<half&&!seen[j]&&cand[j]){seen[j]=1;q[qt++]=j}}
   // 青空に浮かぶ白い雲（2026-10-20、実写真で追加）：上の端から青空か候補を通ってつながり、しかも同じ列のもっと下に青空がある候補。
   //   青空の下にある白い壁・雪は、その下に青空がないので数えない。実装側の仮決め（要確認）
-  const lowSky=new Int32Array(w).fill(-1);for(let i=0;i<half;i++)if(isSky[i]){const x=i%w,y=(i/w)|0;if(y>lowSky[x])lowSky[x]=y}
-  const seen2=new Uint8Array(n);qh=0;qt=0;for(let x=0;x<w;x++)if(cand[x]||isSky[x]){seen2[x]=1;q[qt++]=x}
+  const lowSky=new Int32Array(w).fill(-1);for(let i=0;i<half;i++)if(SK[i]){const x=i%w,y=(i/w)|0;if(y>lowSky[x])lowSky[x]=y}
+  const seen2=new Uint8Array(n);qh=0;qt=0;for(let x=0;x<w;x++)if(cand[x]||SK[x]){seen2[x]=1;q[qt++]=x}
   while(qh<qt){const i=q[qh++],x=i%w,y=(i/w)|0;
     if(cand[i]&&!isCloud[i]&&lowSky[x]>y){isCloud[i]=1;cloud++;if(isArt[i])cloudArt++;rowCloud[y]++}
-    for(const j of [x>0?i-1:-1,x<w-1?i+1:-1,y>0?i-w:-1,i+w])if(j>=0&&j<half&&!seen2[j]&&(cand[j]||isSky[j])){seen2[j]=1;q[qt++]=j}}
-  let hzC=0;for(let yy=0;yy<h;yy++)if((rowSky[yy]+rowCloud[yy])/w>K.HORIZON_ROW)hzC=(yy+1)/h;
-  const openC=K.OPEN_W_SKY*Math.min((sky+cloud)/n/K.OPEN_SKY_NORM,1)+K.OPEN_W_HORIZON*hzC;
+    for(const j of [x>0?i-1:-1,x<w-1?i+1:-1,y>0?i-w:-1,i+w])if(j>=0&&j<half&&!seen2[j]&&(cand[j]||SK[j])){seen2[j]=1;q[qt++]=j}}
+  let hzC=0;for(let yy=0;yy<h;yy++)if((rowSK[yy]+rowCloud[yy])/w>K.HORIZON_ROW)hzC=(yy+1)/h;
+  const openC=K.OPEN_W_SKY*Math.min((skyN+cloud)/n/K.OPEN_SKY_NORM,1)+K.OPEN_W_HORIZON*hzC;
+  // ② 色を問わない空（9.1②。2026-11-07、飯田の決定（T-029 案2））：写真の上の端から、青空・曇り空か「なめらか（XB×XB の区画で線が SKYX_EDGE_MAX 未満）で明るい（V ≧ SKYX_V_MIN）」画素だけを通ってつながる所は、
+  //    色を問わず空に数える（夕焼け・朝焼けの橙・桃、青空の下の白いかすみ、山の上の白い雲）。植物の色の画素は通らない。写真全体を対象にする（上半分に限らない）。
+  //    skyX＝そのうち青空・曇り空でなかった分。skyXArt・skyXWarm＝そのうち人工物・暖色の素材に数えていた分。openX・horizonX＝それも空に足して計算した開放度・地平線。実装側の仮決め（要確認）
+  const isSkyX=new Uint8Array(n),rowSkyX=new Float32Array(h);let skyX=0,skyXArt=0,skyXWarm=0;
+  {const yLim=Math.floor(h*K.SKYX_Y_MAX)*w; // 2026-11-07 ブラッシュアップ：足す画素は上から 2/3 まで（白い砂浜・明るい路面が地平線で空につながるのを防ぐ。青空・曇り空はどこでも通れる）
+   const okX=i=>SK[i]||isCloud[i]||(i<yLim&&blkEdge[(((i/w)|0)/XB|0)*xbw+(((i%w)/XB)|0)]<K.SKYX_EDGE_MAX*XB*XB&&Vs[i]>=K.SKYX_V_MIN&&!isPl[i]);
+    const seen3=new Uint8Array(n),q3=new Int32Array(n);let qh3=0,qt3=0;for(let x=0;x<w;x++)if(okX(x)){seen3[x]=1;q3[qt3++]=x}
+    while(qh3<qt3){const i=q3[qh3++];if(!SK[i]&&!isCloud[i]){isSkyX[i]=1;skyX++;if(isArt[i])skyXArt++;else if(isWarmM[i])skyXWarm++;rowSkyX[(i/w)|0]++}
+      const x=i%w,y=(i/w)|0;for(const j of [x>0?i-1:-1,x<w-1?i+1:-1,y>0?i-w:-1,y<h-1?i+w:-1])if(j>=0&&!seen3[j]&&okX(j)){seen3[j]=1;q3[qt3++]=j}}}
+  let hzX=0;for(let yy=0;yy<h;yy++)if((rowSK[yy]+rowCloud[yy]+rowSkyX[yy])/w>K.HORIZON_ROW)hzX=(yy+1)/h;
+  const openX=K.OPEN_W_SKY*Math.min((skyN+cloud+skyX)/n/K.OPEN_SKY_NORM,1)+K.OPEN_W_HORIZON*hzX;
+  return{isCloud,rowCloud,cloud,cloudArt,hzC,openC,isSkyX,rowSkyX,skyX,skyXArt,skyXWarm,hzX,openX}};
+  const P1=skyPass(isSky,rowSky,sky);
+  const {isCloud,cloud,cloudArt,hzC,openC,isSkyX,skyX,skyXArt,skyXWarm,hzX,openX}=P1;
+  // ③ 空のそうじ（9.1③。2026-11-11、判断の返事1・2回目とお手本の AI から。開発用 ON/OFF skyClean。実装側の仮決め（要確認））：
+  //    晴れた日の日陰（地面・壁）は空の青を映して青く見えるが、本物の空よりずっと暗い。青い空は明るさ SKY_BLUE_V_MIN 以上だけにして、①② をもう一度求める
+  //    （日陰の青を伝って、地面の明るい所まで曇り空・色を問わない空が広がらないように）。そのうえで青い空は「上の端から、空の画素だけを通ってつながる所」だけにする
+  //    （看板・電車の帯・水面の映り込みなど、空から離れた青）。外した青は空にも人工物にも数えない。スカイラインは今のまま
+  const isSkyB=new Uint8Array(n),rowSkyB=new Float32Array(h);let skyBn=0;
+  for(let i=0;i<n;i++)if(isSky[i]&&Vs[i]>=K.SKY_BLUE_V_MIN){isSkyB[i]=1;rowSkyB[(i/w)|0]++;skyBn++}
+  const P2=skyPass(isSkyB,rowSkyB,skyBn);
+  const isSky2=new Uint8Array(n),rowSky2=new Float32Array(h);let sky2n=0;
+  {const C=new Uint8Array(n),q4=new Int32Array(n);let h4=0,t4=0;const U=i=>isSkyB[i]||P2.isCloud[i]||P2.isSkyX[i];
+   for(let x=0;x<w;x++)if(U(x)){C[x]=1;q4[t4++]=x}
+   while(h4<t4){const i=q4[h4++],x=i%w,y=(i/w)|0;for(const j of [x>0?i-1:-1,x<w-1?i+1:-1,y>0?i-w:-1,y<h-1?i+w:-1])if(j>=0&&!C[j]&&U(j)){C[j]=1;q4[t4++]=j}}
+   for(let i=0;i<n;i++)if(isSkyB[i]&&C[i]){isSky2[i]=1;rowSky2[(i/w)|0]++;sky2n++}}
+  let hz2=0;for(let yy=0;yy<h;yy++)if((rowSky2[yy]+P2.rowCloud[yy]+P2.rowSkyX[yy])/w>K.HORIZON_ROW)hz2=(yy+1)/h;
+  const open2=K.OPEN_W_SKY*Math.min((sky2n+P2.cloud+P2.skyX)/n/K.OPEN_SKY_NORM,1)+K.OPEN_W_HORIZON*hz2;
+  // 見通し（9.1④、2026-11-11。飯田の判断の返事から）：空（そうじ後）が写る列の割合と、上 1/4 の覆い（空でも植物でもない所）の割合
+  let viewColsN=0;for(let x=0;x<w;x++){let c=0;for(let yy=0;yy<h;yy++){const i=yy*w+x;if(isSky2[i]||P2.isCloud[i]||P2.isSkyX[i])c++}if(c>=h*K.VIEW_COL_MIN)viewColsN++}
+  let topCov=0;const q4=Math.floor(n/4);for(let i=0;i<q4;i++)if(!isSky[i]&&!isCloud[i]&&!isSkyX[i]&&!isPl[i]&&!isPlDk[i])topCov++;
+  // マスごとの見分け（9.1⑤、2026-11-12。お手本との比べで見つけた分かれ道を、人の手で書いたもの）：
+  //   道＝下のほう・植物なし・線が少ない・横向きの線が多い・空の色と違う／建物＝縦の線が多い・上 3/4・植物でも空でもない・青くない
+  //   田畑や草＝植物の色・下半分・鮮やか・写真の空が横いっぱい・明るい／木＝植物の色が多い・上半分・空の色と違う
+  const CL=(()=>{const CS=Math.max(1,Math.round(w/K.CELL_COLS)),cw=Math.floor(w/CS),ch=Math.floor(h/CS),N2=CS*CS;if(cw<4||ch<3)return{road:0,bldg:0,field:0,tree:0,roadBot:0,bL:0,bR:0};
+    const lum=new Float32Array(n);let sr=0,sg=0,sb=0,sn=0;for(let i=0;i<n;i++){lum[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];if(isSky2[i]||P2.isCloud[i]||P2.isSkyX[i]){sr+=d[i*4];sg+=d[i*4+1];sb+=d[i*4+2];sn++}}
+    if(sn){sr/=sn;sg/=sn;sb/=sn}const skyV=Math.max(sr,sg,sb)/255,vc=viewColsN/w,ET=K.SOBEL_T/K.CELL_EDGE_DIV;
+    let road=0,bldg=0,field=0,tree=0,roadBot=0,botN=0,bL=0,bR=0,lN=0,rN=0;const grid=new Uint8Array(cw*ch); /* マスごとの印（絵に描く用。1 道・2 建物・4 田畑や草・8 木。値の計算には使わない） */const x1=Math.floor(cw*5/16),x2=Math.ceil(cw*11/16),ySide=Math.floor(ch*.75);
+    for(let cy=0;cy<ch;cy++)for(let cx=0;cx<cw;cx++){let r=0,g=0,b=0,e=0,gx=0,gy=0,pl=0,sk=0;
+      for(let y=cy*CS;y<cy*CS+CS;y++)for(let x=cx*CS;x<cx*CS+CS;x++){const i=y*w+x;r+=d[i*4];g+=d[i*4+1];b+=d[i*4+2];
+        if(x>0&&x<w-1&&y>0&&y<h-1){const dx=Math.abs(lum[i+1]-lum[i-1]),dy=Math.abs(lum[i+w]-lum[i-w]);gx+=dx;gy+=dy;if(dx+dy>ET)e++}
+        if(isPl[i]||isPlDk[i])pl++;if(isSky2[i]||P2.isCloud[i]||P2.isSkyX[i])sk++}
+      r/=N2;g/=N2;b/=N2;const mx=Math.max(r,g,b)/255,mn=Math.min(r,g,b)/255,sat=mx?(mx-mn)/mx:0,Y=cy/(ch-1),hv=gy/(gx+gy+1),ed=e/N2,plS=pl/N2,skS=sk/N2;
+      const dSky=sn?Math.sqrt((r-sr)*(r-sr)+(g-sg)*(g-sg)+(b-sb)*(b-sb))/255:1,relV=skyV?mx/skyV:0,blue=(b-r)/255;
+      const isRoad=Y>=K.CELL_ROAD_Y_MIN&&plS<K.CELL_ROAD_PLANT_MAX&&ed<K.CELL_ROAD_EDGE_MAX&&hv>=K.CELL_ROAD_HV_MIN&&dSky>=K.CELL_ROAD_SKYDIST_MIN;
+      const isB=blue<K.CELL_BLDG_BLUE_MAX&&plS<K.CELL_BLDG_PLANT_MAX&&Y<K.CELL_BLDG_Y_MAX&&skS<K.CELL_BLDG_SKY_MAX&&hv<K.CELL_BLDG_HV_MAX;
+      const isF=plS>=K.CELL_FIELD_PLANT_MIN&&Y>=K.CELL_FIELD_Y_MIN&&sat>=K.CELL_FIELD_S_MIN&&vc>=K.CELL_FIELD_VIEW_MIN&&relV>=K.CELL_FIELD_RELV_MIN;
+      const isT=plS>=K.CELL_TREE_PLANT_MIN&&Y<K.CELL_TREE_Y_MAX&&hv<K.CELL_TREE_HV_MAX&&dSky>=K.CELL_TREE_SKYDIST_MIN;
+      if(isRoad)road++;if(isB)bldg++;if(isF)field++;if(isT)tree++;grid[cy*cw+cx]=(isRoad?1:0)|(isB?2:0)|(isF?4:0)|(isT?8:0);
+      if(cy>=ch-2){botN++;if(isRoad)roadBot++}
+      if(cy<ySide){if(cx<x1){lN++;if(isB)bL++}else if(cx>=x2){rN++;if(isB)bR++}}}
+    const C=cw*ch;return{road:road/C,bldg:bldg/C,field:field/C,tree:tree/C,roadBot:roadBot/botN,bL:lN?bL/lN:0,bR:rN?bR/rN:0,grid,cw,ch,CS}})();
   // B4 スカイライン：左から SKYLINE_COLS 本の列。各列で上から見て、最初に「空でない」行の高さ y（0＝上端、1＝下端）。
   // 列の幅の SKYLINE_ROW_SKY 以上が空なら、その行は空とみなす。列に空がまったくなければ y＝0。h＝1−y
   // cols：列ごとに「空がある列か」（1/0）。④ 空のない列を両隣から補うのに使う（補うのは作曲のとき）
@@ -260,8 +358,8 @@ function analyzePixels(d,w,h){
   // 曇り空も空として数え、曇り空の画素は人工物から外す（作曲で使う空・人工物と同じ考え方）
   const skyAll=new Uint8Array(n),artNC=new Uint8Array(n);for(let i=0;i<n;i++){skyAll[i]=isSky[i]|isCloud[i];artNC[i]=isArt[i]&&!isCloud[i]?1:0}
   const L3=l3Features(w,h,skyAll,artNC,isPl,isTr,Vs,colLines,K);
-  return{sky:skyR,plant:plant/n,art:art/n,edge:Math.min(1,edgeRaw/K.EDGE_NORM),open,
-    bright:mean,sat:ss/n,horizon:hz,pan:edges?(eR-eL)/edges:0,
+  const out={sky:skyR,plant:plant/n,art:art/n,edge:Math.min(1,edgeRaw/K.EDGE_NORM),open,
+    bright:mean,sat:ss/n,footSat:n>footFrom?footS/(n-footFrom):0,horizon:hz,pan:edges?(eR-eL)/edges:0,
     shadow:dark/n,contrast:Math.min(1,sd/K.CONTRAST_NORM),
     // A8 色温度（−1〜1）、A10 きらめき
     warmth:(warm-cool)/(warm+cool+1),highlight:Math.min(1,sparkle/n/K.HIGHLIGHT_NORM),
@@ -271,14 +369,22 @@ function analyzePixels(d,w,h){
     tree:tree/n,grass:grass/n,flower:flower/n,gray:art/n,warmMat:warmMat/n,brightSurf:brightSurf/n,water:water/half,
     // ① 曇り空（ステップ9.1）。cloudArt＝曇り空のうち、今まで人工物に数えていた分。openC・horizonC・skylineC は空に曇り空を足して計算したもの
     cloud:cloud/n,cloudArt:cloudArt/n,openC,horizonC:hzC,skylineC:SLC.vals,skyCols:SL.cols,skyColsC:SLC.cols,
+    // ② 色を問わない空（9.1②、2026-11-07）。ON のとき、空に skyX を足し、人工物・暖色の素材から skyXArt・skyXWarm を引き、開放度・地平線は openX・horizonX
+    skyX:skyX/n,skyXArt:skyXArt/n,skyXWarm:skyXWarm/n,openX,horizonX:hzX,
+    // ③ 空のそうじ（9.1③、2026-11-11）。ON のとき、空は sky2＋cloud2＋skyX2、人工物から cloudArt2・skyXArt2、暖色の素材から skyXWarm2 を引き、開放度・地平線は openX2・horizonX2
+    sky2:sky2n/n,cloud2:P2.cloud/n,cloudArt2:P2.cloudArt/n,skyX2:P2.skyX/n,skyXArt2:P2.skyXArt/n,skyXWarm2:P2.skyXWarm/n,openX2:open2,horizonX2:hz2,viewCols:viewColsN/w,viewCover:topCov/q4,cellRoad:CL.road,cellBldg:CL.bldg,cellField:CL.field,cellTree:CL.tree,cellRoadBot:CL.roadBot,cellBldgL:CL.bL,cellBldgR:CL.bR,
     // ステップ10：色相 50〜70° の植物（ON のとき植物・樹木・芝に足し、花・暖色の素材から引く）
     plantLo:plantLo/n,treeLo:treeLo/n,grassLo:grassLo/n,flowerLo:flowerLo/n,
+    // 暗い木（T-031 ③ 案 E。2026-11-07）。ON のとき植物・樹木・草に足し、人工物から plantDkArt を引く
+    plantDk:plantDk/n,treeDk:treeDk/n,grassDk:grassDk/n,plantDkArt:plantDkArt/n,
     // 下3分の1の無彩色（地面の舗装・砂利。2026-10-20）
     artLow:artLow/n,
     // 横線のくり返し（街の種類。2026-10-21）
     rowRep,
     // ステップ18 1枚の写真の構造（2026-10-28）
     ...L3};
+  if(opts&&opts.masks)out.masks={sky2:isSky2,cloud2:P2.isCloud,skyX2:P2.isSkyX,sky:isSky,cloud:isCloud,skyX:isSkyX,plant:isPl,plantDk:isPlDk,tree:isTr,flower:isFl,gray:isArt,warmMat:isWarmM,brightSurf:isBS,water:(()=>{const m=new Uint8Array(n);for(let i=half;i<n;i++)m[i]=isSky[i];return m})(),cells:CL.grid?{grid:CL.grid,cw:CL.cw,ch:CL.ch,cs:CL.CS}:null};
+  return out;
 }
 
 /* ---------- ステップ18：1枚の写真の構造（L3）の手がかり（2026-10-28。音はまだ使わない） ----------
@@ -391,15 +497,43 @@ function judgePlace(p,prev,opts){
   // 水面（写真の下半分の空色。water は下半分に対する割合なので、写真全体では半分）も自然に数える：海辺・河川敷が「開けた自然」になるように。実装側の仮決め（要確認）
   const K=PARAM,artAll=p.art+(p.warmMat||0),wat=(p.water||0)/2,nat=p.plant+wat,mat=nat+artAll;
   if(p.sky<K.PLACE_NONE_MAX&&p.plant<K.PLACE_NONE_MAX&&artAll<K.PLACE_NONE_MAX)return{place:'none',natural:.5,strength:0};
-  const natural=mat<K.PLACE_MIN_MAT?.5:nat/mat;
+  // 9.1⑤ マスごとの見分け（opts.cells、夜でない写真だけ）：街か自然かを「緑の量」ではなく（木＋田畑や草）−（建物＋道）で決める。緑でない自然（土・水・山・枯れ色）も、建物と道がなければ自然の側に入る（2026-11-12）
+  const useCells=O.cells&&!O.night&&p.cellBldg!==undefined;
+  const natural=useCells?Math.min(1,Math.max(0,.5+((p.cellTree+p.cellField)-(p.cellBldg+p.cellRoad)-K.PLACE_CELL_NAT)*K.PLACE_CELL_NAT_SLOPE)):mat<K.PLACE_MIN_MAT?.5:nat/mat;
   const wasOpen=prev==='openNat'||prev==='openCity',wasNat=prev==='openNat'||prev==='closedNat',known=prev&&prev!=='none';
-  const isOpen=known&&wasOpen?p.open>=K.PLACE_OPEN-K.PLACE_KEEP:p.open>=K.PLACE_OPEN;
-  const isNat=known&&wasNat?natural>=K.PLACE_NATURAL-K.PLACE_KEEP:natural>=K.PLACE_NATURAL;
+  const OPEN=O.open45?K.PLACE_OPEN_45:K.PLACE_OPEN; // T-040（2026-11-07、飯田の決定）：境目を 0.45 に（opts.open45 のとき）
+  // 9.1④ 見通し（opts.view、夜でない写真だけ）：空の量ではなく「空が横に続く・上がふさがれていない」で開けているかを決める（2026-11-11）
+  const useView=O.view&&!O.night&&p.viewCols!==undefined;
+  const isOpen=useView?(p.viewCols>=K.VIEW_SKY_COLS_MIN&&p.viewCover<K.VIEW_COVER_MAX):known&&wasOpen?p.open>=OPEN-K.PLACE_KEEP:p.open>=OPEN;
+  const isNat=useCells?natural>=K.PLACE_NATURAL:known&&wasNat?natural>=K.PLACE_NATURAL-K.PLACE_KEEP:natural>=K.PLACE_NATURAL;
   const place=isOpen?(isNat?'openNat':'openCity'):(isNat?'closedNat':'closedCity');
   // 強さ：境目からどれだけ離れているか（2つのものさしの近いほう。0〜1）
-  const strength=Math.min(1,2*Math.min(Math.abs(p.open-K.PLACE_OPEN),Math.abs(natural-K.PLACE_NATURAL)));
+  const strength=useView?Math.min(1,2*Math.min(Math.abs(p.viewCols-K.VIEW_SKY_COLS_MIN),Math.abs(p.viewCover-K.VIEW_COVER_MAX),Math.abs(natural-K.PLACE_NATURAL))):Math.min(1,2*Math.min(Math.abs(p.open-OPEN),Math.abs(natural-K.PLACE_NATURAL)));
   return{place,natural,strength};
 }
+/* 枝（9.1⑤、2026-11-12）：場所の性格（4分類）の下の、もう一段細かい分け。音にはまだ使わない（表示と検討用）。
+   開けた自然 → 田畑・草地／開けた自然（そのほか）、囲まれた自然 → 緑道・並木／森・木立、街 → 路地／大通り・広場（「建物の正面」は 2026-11-12 に外した。飯田「いらない」） */
+function judgeBranch(p,place){const K=PARAM;if(p.cellBldg===undefined||place==='none')return null;
+  const dh=p.cellRoadBot/(Math.min(p.cellBldgL,p.cellBldgR)+.05);
+  if(place==='openNat')return p.cellRoad>=K.BRANCH_ROAD_MIN&&p.cellTree>p.cellField?'greenway':p.cellField>=K.BRANCH_FIELD_MIN&&p.cellField>=p.cellTree?'field':'openOther';
+  if(place==='closedNat')return p.cellRoad>=K.BRANCH_ROAD_MIN?'greenway':'forest';
+  return dh<K.BRANCH_DH_ALLEY?'alley':'avenue'}
+const BRANCH_JA={field:'田畑・草地',openOther:'開けた自然（そのほか）',greenway:'緑道・並木',forest:'森・木立',alley:'路地（両側に建物）',avenue:'大通り・広場'};
+/* ---------- 判定の前に足す分（T-061、2026-11-11）：アプリ（mockup.html の STEP 7）と計測画面の読み直しで同じものを使う ---------- */
+/* 撮った時刻（日本時間の時）。ts は秒 */
+function hourJST(ts){return Math.floor(((ts/3600+9)%24+24)%24)}
+/* 夜（2026-10-20）：暗い写真か、18時〜5時の少し暗い写真。hour が分からないときは暗さだけで決める */
+function isNight(p,hour){const K=PARAM;return p.bright<K.NIGHT_V||((hour>=K.NIGHT_HOUR_FROM||hour<K.NIGHT_HOUR_TO)&&p.bright<K.NIGHT_V_LATE)}
+/* p を直接書き換える。o は使うものだけ true（値がそろっているかの確かめは呼ぶ側で）：
+   cloud ①曇り空（9.1①）・skyAny ②色を問わない空（9.1②。cloud のときだけ）・skyClean ③空のそうじ（9.1③。skyAny のときだけ）・calib ステップ10（黄緑の植物・線の目盛り・水面は使わない）・plantDark 暗い木（夜は使わない） */
+function addBeforeJudge(p,o){const K=PARAM;
+  if(o.cloud&&o.skyAny&&o.skyClean){p.sky=p.sky2+p.cloud2+p.skyX2;p.art=Math.max(0,p.art-p.cloudArt2-p.skyXArt2);p.gray=p.art;p.warmMat=Math.max(0,(p.warmMat||0)-p.skyXWarm2);p.open=p.openX2;p.horizon=p.horizonX2}
+  else{
+  if(o.cloud){p.sky+=p.cloud;p.art=Math.max(0,p.art-p.cloudArt);p.gray=p.art;p.open=p.openC;p.horizon=p.horizonC}
+  if(o.cloud&&o.skyAny){p.sky+=p.skyX;p.art=Math.max(0,p.art-p.skyXArt);p.gray=p.art;p.warmMat=Math.max(0,(p.warmMat||0)-p.skyXWarm);p.open=p.openX;p.horizon=p.horizonX}}
+  if(o.calib){p.plant+=p.plantLo;p.tree+=p.treeLo;p.grass+=p.grassLo;p.flower=Math.max(0,p.flower-p.flowerLo);p.edge=Math.min(1,p.edgeRaw/K.EDGE_NORM_10);p.water=0}
+  if(o.plantDark){p.plant+=p.plantDk;p.tree+=p.treeDk;p.grass+=p.grassDk;p.art=Math.max(0,p.art-p.plantDkArt);p.gray=p.art}
+  return p}
 /* ---------- 3.12 主な細分類（花は除く） ---------- */
 function mainMaterial(p,opts){const O=opts||{};let best=null,bv=0;for(const k of ['tree','grass','gray','warmMat','brightSurf']){let v=p[k]||0;
     if(O.surround&&k==='gray')v=Math.max(0,v-PARAM.GROUND_ART_W*(p.artLow||0)); // 舗装は半分
@@ -408,5 +542,5 @@ function mainMaterial(p,opts){const O=opts||{};let best=null,bv=0;for(const k of
 
 function changeKeys(features){return['sky','plant','art','edge',...((features||{}).open===false?[]:['open'])]}
 
-root.TC=Object.freeze({patternsOf,l3Features,PARAM,VALUE_KEYS,SCALES,SCALE_JA,KEYS,PC,ENV_JA,PLACES,INSTR,CITY_TYPES,cityType,STYLES,STYLE_WEAR,STYLE_INS_JA,PLACE_ORDER,styleWear,judgePlace,mainMaterial,mulberry32,analyzePixels,analyze,preparePhoto,shrink,pixelsOf,makeCanvas,judgeNode,changeKeys,skylinePoints});
+root.TC=Object.freeze({patternsOf,l3Features,PARAM,VALUE_KEYS,SCALES,SCALE_JA,KEYS,PC,ENV_JA,PLACES,INSTR,CITY_TYPES,cityType,STYLES,STYLE_WEAR,STYLE_INS_JA,PLACE_ORDER,styleWear,judgePlace,judgeBranch,BRANCH_JA,addBeforeJudge,isNight,hourJST,mainMaterial,mulberry32,analyzePixels,analyze,preparePhoto,shrink,pixelsOf,makeCanvas,judgeNode,changeKeys,skylinePoints});
 })(typeof self!=='undefined'?self:this);
