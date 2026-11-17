@@ -456,6 +456,9 @@ body.shell .p3-next{margin:8px 0 0;width:100%}body.shell .p3-next[hidden]{displa
 #menu-walks .walk-row{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 #menu-walks .walks-h{display:block;margin-bottom:6px;font-size:12px}
 #menu-walks .walk-tools{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px}
+.saved-walks{margin-top:12px;display:grid;gap:6px}.saved-walks h4{margin:0 0 2px;font-size:13px}.saved-walks small{color:var(--mute);font-size:11px}
+.sw-item{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:6px 8px;background:var(--sheet)}.sw-item img{width:56px;height:42px;object-fit:cover;border-radius:6px;flex:none}.sw-item span{flex:1;min-width:0;font-size:13px;line-height:1.4}
+.sw-item button{min-height:40px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:99px;padding:2px 12px;font-size:13px;cursor:pointer}.sw-item button.main{background:var(--route);border-color:var(--route);color:#fff;font-weight:700}
 #menu-walks .store-note{font-size:11px;color:var(--mute)}
 #menu-walks details{margin-top:10px}
 /* てんちゃんが出る画面は白地（2026-10-31、飯田：「てんちゃんと背景が同化するから白地のほうがいいかも」）。暗い表示でも明るい色のまま */
@@ -748,6 +751,7 @@ tr.click:hover td{background:var(--soft)}
     <div class="walks-h"><b data-tx="menu.walks.h">散歩を選ぶ</b><span data-tx="menu.walks.lead">同じアルゴリズムでも、歩き方と見た風景が違えば、できる曲も変わります。</span></div>
     <div class="walk-row" id="walk-row"></div>
     <div class="walk-tools" id="walk-tools"></div>
+    <div class="saved-walks" id="saved-walks" hidden></div>
     <input id="user-files" type="file" accept="image/*" multiple hidden>
     <input id="backup-in" type="file" accept=".json,.zip,application/json,application/zip" hidden>
     <p class="store-note" id="store-note">記録はこの端末のブラウザの中に保存します。<b>Claude アプリの中やプライベートブラウズで開くと、閉じたときに消えることがあります。</b>Safari などのふだんのブラウザで開き、散歩のあとは「控えとして保存」をしておくと安心です。</p>
@@ -1114,7 +1118,7 @@ tr.click:hover td{background:var(--soft)}
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
 <div id="zk-table" hidden role="dialog" aria-label="図鑑の台帳：対応の一覧"><div class="zk-tbar"><b>図鑑の台帳：風景と音の対応の一覧</b><button type="button" class="spf-x" id="zk-table-print">印刷</button><button type="button" class="spf-x" id="zk-table-close">閉じる</button></div><div id="zk-table-body"></div></div>
-<script>window.TC_TRIAL={"version": "1.2-event-test", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": false, "cloud": true, "skyAny": true, "skyClean": false, "plantDark": true, "placeView": false, "placeCells": false, "placeOpen45": true, "ex16Mel": true, "ex16Sky": false, "ex16Acc": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": false, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "tutListen": true, "i18n": true, "resumeAsk": true, "dedupImport": true, "newWalkAsk": true, "imgLost": true, "eventLoc": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false, "spaceSec": false, "trackCos": false, "secSound": false, "secSound2": false, "procView": false, "serialView": false}};</script>
+<script>window.TC_TRIAL={"version": "1.2-event-test", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": false, "cloud": true, "skyAny": true, "skyClean": false, "plantDark": true, "placeView": false, "placeCells": false, "placeOpen45": true, "ex16Mel": true, "ex16Sky": false, "ex16Acc": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": false, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "tutListen": true, "i18n": true, "resumeAsk": true, "dedupImport": true, "newWalkAsk": true, "imgLost": true, "eventLoc": true, "savedWalks": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false, "spaceSec": false, "trackCos": false, "secSound": false, "secSound2": false, "procView": false, "serialView": false}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -1201,6 +1205,7 @@ const FEATURE_LIST=[
   {id:'newWalkAsk',name:'T-105 案C2 前の散歩がのこっているときに別の日の写真を入れたら（「1 撮る」を別の日に開いたときも）、「保存して新しく始める／保存せずに新しく始める／この散歩に足す」を聞く。保存をやめた・失敗したときは消さない（2026-11-16、実装側の仮決め（要確認））',off:'聞かずに、前の散歩に足す（今まで）'},
   {id:'imgLost',name:'T-105 案B 端末にしまった写真が読めなくなったら、空白のままにせず「この写真は読めなくなりました（取り込み直してください）」の絵に替える（2026-11-16、実装側の仮決め（要確認））',off:'読めない写真は空白のまま（今まで）'},
   {id:'eventLoc',def:false,name:'T-070 体験会版（11/20 専用）：「作者に送る」に「撮った場所」のチェックを別に置く（最初はオフ）。同意した人だけ、アプリの中のカメラで撮った写真の撮った場所（緯度・経度を小数点以下4桁＝約10m に丸める）を送る。シャッターのたびに位置を取り直す（1分前までの位置を使わない）。体験会版の書き出しだけ ON（privacy.md「体験会版」、CLAUDE.md ルール12・21 の例外。2026-11-16 飯田）',off:'撮った場所は送らない（ふだんの体験版・開発版）'},
+  {id:'savedWalks',name:'T-105 前の散歩をアプリの中に保存する（2026-11-17 飯田：外のファイルの控えは分かりにくい）。「保存して新しく始める」で、前の散歩をメニューの「保存した散歩」に入れ、あとで開ける（開くと、今の散歩と入れかわる）。実装側の仮決め（要確認）',off:'「保存して新しく始める」は、控えのファイルに保存する（11/16 の形）'},
   {id:'resumeAsk',name:'はじめの画面から始めたとき、前の散歩（写真）が残っていたら「つづきから／新しく始める」を聞く（2026-11-11、飯田。新しく始めるは、もう一度「消しますか？」で確かめる。曲は変わらない）',off:'聞かずに前の散歩の続きを開く（今まで）'},
   {id:'tutListen',name:'つかいかたの「聴いてみる」（場所の性格4つを写真と▶で。T-046）',off:'つかいかたに「聴いてみる」のページを出さない'},
   {id:'soundGuide',name:'風景と音の早見表（体験会・展示の説明）',off:'再生画面に早見表のボタンを出さない'},
@@ -2751,6 +2756,7 @@ function renderWalkRow(){
   if($('#bk-save'))$('#bk-save').addEventListener('click',exportBackup);
   if($('#no-loc'))$('#no-loc').addEventListener('change',e=>{noLocation=e.target.checked;try{localStorage.setItem('tc-no-location',noLocation?'1':'0')}catch(_){}toast(noLocation?T('menu.noLoc.on'):T('menu.noLoc.off'))});
   if($('#walk-clear'))$('#walk-clear').addEventListener('click',askClearReal);
+  renderSavedWalks();
   renderDev();
 }
 /* ---------- T-105 案C2（2026-11-16）：前の散歩がのこっているとき「保存して新しく始める」 ----------
@@ -2774,7 +2780,49 @@ async function clearRealNow(wk){
   wk.nodes=[];wk.song=null;wk.promise=null;wk.sel=0;
 }
 const backupName=()=>{const d=new Date(),pad=v=>String(v).padStart(2,'0');return`walk-backup_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`};
-// 前の散歩を控えに保存する。アプリの中のカメラで撮った写真があれば、写真アプリへの保存も聞く。戻り値 true＝保存できた（やめた・失敗したら false。そのときは消さない）
+/* ---------- 保存した散歩（2026-11-17、T-105。飯田「前の散歩の保存は、アプリの中でできるようにする。あとでアプリの中から開ける」） ----------
+   前の散歩の写真・メモ・設定を、端末の中の別の名前（'S'＋保存した時刻）に移す。メニューの「保存した散歩」に並び、開くと今の散歩と入れかわる（今の散歩も保存した散歩に入る）。
+   端末の外には出さない。記録はこの端末のこのブラウザの中だけ（ブラウザの記録を消すと消える）。実装側の仮決め（要確認） */
+const savedOn=()=>FEATURES.savedWalks!==false&&window.TCStore&&window.TCStore.moveWalk;
+const savedMetaOf=wk=>{const old=sorted(wk);return{...walkExtra(),status:walkStatus||'finished',savedAt:Date.now(),n:old.length,from:old.length?old[0].ts:null,to:old.length?old[old.length-1].ts:null,unknownOnly:old.every(n=>n.timeUnknown)}};
+const savedLabel=m=>T('saved.item',{date:m.from!=null&&!m.unknownOnly?new Date(m.from*1000).toLocaleDateString(LOC,{year:'numeric',month:'numeric',day:'numeric'}):new Date(m.savedAt).toLocaleDateString(LOC,{year:'numeric',month:'numeric',day:'numeric'}),n:m.n||0});
+async function saveOldWalkInApp(wk){
+  try{const n=await window.TCStore.moveWalk(REAL_ID,'S'+Date.now(),savedMetaOf(wk));if(!n)throw new Error('empty');newWalkSaved='app';return true}
+  catch(_){toast(T('nw.saveFail'),4000);return false}}
+let savedThumbs=[];
+async function renderSavedWalks(){const box=$('#saved-walks');if(!box)return;
+  if(!savedOn()||!userDef){box.hidden=true;return}
+  let list=[];try{list=(await window.TCStore.listMeta()).filter(m=>/^S\d+$/.test(m.walk)).sort((a,b)=>(b.savedAt||0)-(a.savedAt||0))}catch(_){}
+  savedThumbs.forEach(u=>{try{URL.revokeObjectURL(u)}catch(_){}});savedThumbs=[];
+  if(!list.length){box.hidden=true;box.innerHTML='';return}
+  const rows=await Promise.all(list.map(async m=>{let src='';try{const r=await window.TCStore.load(m.walk);if(r[0]&&r[0].blob){src=URL.createObjectURL(r[0].blob);savedThumbs.push(src)}if(!m.n)m.n=r.length}catch(_){}return{m,src}}));
+  box.innerHTML=`<h4>${T('saved.h')}</h4><small>${T('saved.lead')}</small>`+rows.map(({m,src},i)=>`<div class="sw-item">${src?`<img src="${src}" alt="">`:''}<span>${esc(savedLabel(m))}</span><button type="button" class="main" data-open="${i}">${T('saved.open')}</button><button type="button" data-del="${i}">${T('saved.del')}</button></div>`).join('');
+  box.hidden=false;
+  box.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSavedWalk(rows[+b.dataset.open].m,rows[+b.dataset.open].src)));
+  box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deleteSavedWalk(rows[+b.dataset.del].m,rows[+b.dataset.del].src)))}
+// 開く：今の散歩（写真があれば）を保存した散歩に入れてから、選んだ散歩を今の散歩にする
+async function openSavedWalk(m,src){
+  const wk=ensureRealWalk(),now=wk.nodes.length;
+  const v=await askChoice({title:T('saved.open.title',{label:savedLabel(m)}),text:now?T('saved.open.text',{n:now}):T('saved.open.textEmpty'),imgs:src?[{src,cap:savedLabel(m)}]:[],options:[['yes',T('saved.open'),true],['no',T('edit.cancel')]]});
+  if(v!=='yes')return;
+  if(pl.playing)pause();stopAudition();
+  try{if(now)await window.TCStore.moveWalk(REAL_ID,'S'+Date.now(),savedMetaOf(wk));
+    await window.TCStore.moveWalk(m.walk,REAL_ID,null)}
+  catch(_){toast(T('saved.fail'),4000);renderSavedWalks();return}
+  wk.nodes.forEach(n=>{try{URL.revokeObjectURL(n.src)}catch(_){}});wk.nodes=[];wk.song=null;wk.promise=null;wk.sel=0;
+  const recs=await window.TCStore.load(REAL_ID);wk.nodes=recs.map(fromRecord);layoutReal(wk);
+  wk.moodOff=!!m.moodOff;wk.style=STYLES[m.style]&&styleOk(m.style)?m.style:'mellow';wk.length=PARAM.LENGTH_MIN.includes(m.length)?m.length:3;wk.noSabi=!!m.noSabi;
+  walkStatus=null;setStatus(STATUS_JA[m.status]?m.status:'finished');newWalkAsked=true;
+  if(state.walkId!==REAL_ID){state.walkId=null;setWalk(REAL_ID)}
+  if(SHELL)$('#menu').hidden=true;
+  renderWalkRow();setPhase(walkStatus==='recording'?1:walkStatus==='composed'?3:2);
+  toast(now?T('saved.open.done',{n:now}):T('saved.open.doneEmpty'),4000);ensureSong(wk).then(renderWalkRow)}
+async function deleteSavedWalk(m,src){
+  const v=await askChoice({title:T('saved.del.title'),text:T('saved.del.text',{label:savedLabel(m)}),imgs:src?[{src,cap:''}]:[],options:[['yes',T('saved.del'),true],['no',T('edit.cancel')]]});
+  if(v!=='yes')return;
+  try{await window.TCStore.clear(m.walk);toast(T('saved.del.done'))}catch(_){toast(T('saved.fail'),4000)}
+  renderSavedWalks()}
+// 前の散歩を控えに保存する（savedWalks が OFF のとき。11/16 の形）。アプリの中のカメラで撮った写真があれば、写真アプリへの保存も聞く。戻り値 true＝保存できた（やめた・失敗したら false。そのときは消さない）
 async function saveOldWalk(wk){
   // 保存をやめたことが分かる形で保存する（11/16 夜の直し。体験版は GitHub Pages なので claude.ai の保存の仕組みがない）：
   //   ① claude.ai の保存の仕組み（開発版）：やめると declined　② 共有の画面に渡せる端末（iPhone など）：共有の画面で「"ファイル"に保存」。閉じると AbortError
@@ -2801,7 +2849,7 @@ async function askNewWalk(wk,news,fromCam){
     const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:fromCam?T('nw.textCam'):T('nw.text',{m:news.length}),imgs,
       options:[['save',T('nw.save'),true],['drop',T('nw.drop')],['add',fromCam?T('nw.continue'):T('nw.add')],...(fromCam?[]:[['cancel',T('nw.cancel')]])]});
     if(v==='add'||v==='cancel')return v;
-    if(v==='save'){if(await saveOldWalk(wk)){await clearRealNow(wk);return'new'}continue} // 保存をやめた・失敗した：消さずに、もう一度聞く
+    if(v==='save'){if(await (savedOn()?saveOldWalkInApp(wk):saveOldWalk(wk))){await clearRealNow(wk);renderSavedWalks();return'new'}continue} // 保存をやめた・失敗した：消さずに、もう一度聞く（アプリの中に保存するときは、移せなかったときだけ）
     if(v==='drop'){const y=await askChoice({title:T('menu.clear.title'),text:T('menu.clear.text',{n:old.length}),imgs:[{src:last.src,cap:''}],options:[['yes',T('menu.clear.ok'),true],['no',T('edit.cancel')]]});
       if(y==='yes'){await clearRealNow(wk);return'new'}}
   }}
@@ -2809,8 +2857,8 @@ async function askNewWalk(wk,news,fromCam){
 async function askCamNewWalk(){
   const wk=cur();if(FEATURES.newWalkAsk===false||newWalkAsked||state.phase!==1||!isReal(wk)||!wk.nodes.length||!$('#choice').hidden||!$('#confirm').hidden||!$('#start').hidden||!$('#tut').hidden)return;
   if(!farDay(oldTimes(wk),Math.round(Date.now()/1000)))return;
-  const v=await askNewWalk(wk,[],true);
-  if(v==='new'){renderWalkRow();prepareNext();renderTabs&&SHELL&&renderTabs();toast(T('nw.started'),2500)}}
+  newWalkSaved=false;const v=await askNewWalk(wk,[],true);
+  if(v==='new'){renderWalkRow();prepareNext();renderTabs&&SHELL&&renderTabs();toast(T('nw.started')+(newWalkSaved==='app'?T('nw.savedIn'):''),newWalkSaved==='app'?5000:2500)}}
 /* T-105 案B（2026-11-16）：端末にしまった写真が読めなくなったとき（iPhone の Safari で起きるかもしれない。まだ確かめていない）、空白のままにせず知らせる絵に替える。しまい方は変えていない */
 const lostImg=()=>'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240"><rect width="320" height="240" fill="#E9EDE6"/><text x="160" y="114" text-anchor="middle" font-size="19" fill="#5A6862" font-family="sans-serif">${esc(T('img.lost'))}</text><text x="160" y="142" text-anchor="middle" font-size="14" fill="#5A6862" font-family="sans-serif">${esc(T('img.lost.sub'))}</text></svg>`);
 document.addEventListener('error',e=>{const im=e.target;if(FEATURES.imgLost===false||!im||im.tagName!=='IMG'||im.dataset.lost||!/^blob:/.test(im.getAttribute('src')||''))return;
@@ -2862,7 +2910,7 @@ async function importPhotos(files){
   // 案A：もう入っていた写真の時刻を直したら、並びと曲を作り直してしまい直す
   if(fixedOld.length){layoutReal(wk);wk.song=null;wk.promise=null;for(const n of fixedOld)await persist(n)}
   renderWalkRow();
-  toast(T('imp.done',{ok})+(unknown?T('imp.done.unknown',{n:unknown}):'')+(fail?T('imp.done.fail',{n:fail}):'')+(heicFail?T('imp.done.heic',{n:heicFail}):'')+(dup?T('imp.done.dup',{n:dup}):'')+(fixed?T('imp.done.dupTime',{n:fixed}):'')+(newWalkSaved?T(newWalkSaved==='share'?'nw.whereShare':'nw.where'):''),heicFail||newWalkSaved?7000:dup?4000:1400);
+  toast(T('imp.done',{ok})+(unknown?T('imp.done.unknown',{n:unknown}):'')+(fail?T('imp.done.fail',{n:fail}):'')+(heicFail?T('imp.done.heic',{n:heicFail}):'')+(dup?T('imp.done.dup',{n:dup}):'')+(fixed?T('imp.done.dupTime',{n:fixed}):'')+(newWalkSaved?T(newWalkSaved==='app'?'nw.savedIn':newWalkSaved==='share'?'nw.whereShare':'nw.where'):''),heicFail||newWalkSaved?7000:dup?4000:1400);
   if(state.phase===1)renderCam();if(state.phase===2)renderEdit();if(state.phase===3)enterPlay();
   ensureSong(wk).then(renderWalkRow);
   // 取り込んだ写真を見せる（2026-10-31、体験者の声「反映されたか分からない」「ほかの写真はどう見る？」）
@@ -3440,7 +3488,7 @@ function rsOpen(){const wk=cur();if(!wk.song)return;if(pl.playing)pause();RS.blo
     ${opt('photo',T('send.item.photo'),T('send.item.photo.d'),true)}
     ${opt('track',T('send.item.track'),T('send.item.track.d'),true)}
     ${opt('clock',T('send.item.clock'),T('send.item.clock.d'),true)}
-    ${FEATURES.eventLoc===true?(()=>{const np=wk.nodes.filter(eventPlaceOK).length;return opt('place',T('send.item.place'),np?T('send.item.place.d',{n:np}):T('send.item.place.none'),false,!np)})():''}
+    ${FEATURES.eventLoc===true?(()=>{const np=wk.nodes.filter(eventPlaceOK).length;return opt('place',T('send.item.place'),np?T('send.item.place.d',{n:np}):T('send.item.place.none'),np>0,!np)})():''}
     ${opt('memo',T('send.item.memo'),hasMemo?'':T('send.item.memo.none'),hasMemo,!hasMemo)}
     ${opt('quiz',T('send.item.quiz'),hasQ?'':T('send.item.quiz.none'),hasQ,!hasQ)}
     <div class="rs-sec">展示に使う情報（どれも空欄でよい）</div>
@@ -3533,7 +3581,7 @@ async function rsPhotoBytes(n){
   const b=await rsPhoto(n.src);if(!b)return null;
   try{return await readBlob(b)}catch(_){return null}}
 // 送るものを選んだとおりに用意する（散歩譜・写真・メモ・結果・WAV）。中身は読んで CRC まで計算しておくので、押したあとはすぐ zip にできる（G3 案C）
-const RS_OPTS=['photo','track','clock','memo','wav','quiz','place']; // place：体験会版だけ（eventLoc）
+const RS_OPTS=['photo','track','clock','memo','wav','quiz','place']; // place：体験会版だけ（eventLoc）。体験会版の「撮った場所」は、送れる写真があれば最初からオン（2026-11-17 飯田：外せば送らない）
 // 体験会版：送れる撮った場所＝アプリの中のカメラで撮った写真で、位置が取れたものだけ（写真アプリから選んだ写真の位置は送らない）
 const eventPlaceOK=n=>FEATURES.eventLoc===true&&n.cam&&n.lat!=null&&n.lng!=null;
 const round4=x=>(Math.round(x*1e4)/1e4).toFixed(4); // 小数点以下4桁（約10m）

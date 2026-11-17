@@ -62,6 +62,19 @@ function getMeta(walk){return tx('readonly',st=>reqP(st.get(walk)),META).then(v=
 // extra：散歩全体の設定（moodOff＝気分を使わない、など。ステップ12）
 function setMeta(walk,status,extra){return tx('readwrite',st=>{st.put({...(extra||{}),walk,status,updatedAt:Date.now()})},META)}
 
+// 散歩をまるごと別の名前に移す（「保存した散歩」。2026-11-17、T-105）。写真の記録と散歩の設定を1回のやりとりで移し、途中で失敗したら何も変えない。
+//   to の設定は meta（なければ from の設定を引き継ぐ）。from の設定は消す
+function moveWalk(from,to,meta){
+  return load(from).then(recs=>open().then(db=>new Promise((resolve,reject)=>{
+    const t=db.transaction([STORE,META],'readwrite'),st=t.objectStore(STORE),mt=t.objectStore(META);
+    const g=mt.get(from);
+    g.onsuccess=()=>{const old=g.result||{};recs.forEach(r=>st.put({...r,walk:to}));mt.put({...old,...(meta||{}),walk:to,updatedAt:Date.now()});mt.delete(from)};
+    t.oncomplete=()=>resolve(recs.length);t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error);
+  })));
+}
+// 散歩の設定をぜんぶ読む（保存した散歩の一覧に使う）
+function listMeta(){return tx('readonly',st=>reqP(st.getAll()),META).then(a=>a||[])}
+
 // ブラウザに記録を消されにくくする（使える端末だけ）。戻り値 'granted'|'denied'|'unsupported'
 async function askPersist(){
   const s=root.navigator&&navigator.storage;
@@ -70,5 +83,5 @@ async function askPersist(){
 }
 async function estimate(){try{return navigator.storage&&navigator.storage.estimate?await navigator.storage.estimate():null}catch(_){return null}}
 
-root.TCStore=Object.freeze({load,get,put,remove,clear,replaceAll,getMeta,setMeta,askPersist,estimate});
+root.TCStore=Object.freeze({load,get,put,remove,clear,replaceAll,getMeta,setMeta,moveWalk,listMeta,askPersist,estimate});
 })(typeof self!=='undefined'?self:this);
