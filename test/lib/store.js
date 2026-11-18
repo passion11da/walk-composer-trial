@@ -72,6 +72,8 @@ function moveWalk(from,to,meta){
     t.oncomplete=()=>resolve(recs.length);t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error);
   })));
 }
+// 散歩の記録を1つだけ読む（保存した散歩の一覧の小さな絵に使う。ぜんぶの写真を読まないため）
+function first(walk){return tx('readonly',st=>new Promise((res,rej)=>{const r=st.index('walk').openCursor(IDBKeyRange.only(walk));r.onsuccess=()=>res(r.result?r.result.value:null);r.onerror=()=>rej(r.error)}))}
 // 散歩の設定をぜんぶ読む（保存した散歩の一覧に使う）
 function listMeta(){return tx('readonly',st=>reqP(st.getAll()),META).then(a=>a||[])}
 
@@ -83,5 +85,5 @@ async function askPersist(){
 }
 async function estimate(){try{return navigator.storage&&navigator.storage.estimate?await navigator.storage.estimate():null}catch(_){return null}}
 
-root.TCStore=Object.freeze({load,get,put,remove,clear,replaceAll,getMeta,setMeta,moveWalk,listMeta,askPersist,estimate});
+root.TCStore=Object.freeze({load,get,put,remove,clear,replaceAll,getMeta,setMeta,moveWalk,listMeta,first,askPersist,estimate});
 })(typeof self!=='undefined'?self:this);

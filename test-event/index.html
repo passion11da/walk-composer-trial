@@ -2749,13 +2749,14 @@ function renderWalkRow(){
     (userDef?'':`<button class="walk add" id="walk-add"><span class="wn">＋ 自分の散歩を記録する</span><span class="wd">実際に撮った写真で散歩を記録します。シャッターでカメラが開き、撮った時刻（と取れれば位置）を記録します。ライブラリの写真もまとめて取り込めます。</span></button>`);
   $('#walk-row').querySelectorAll('.walk[data-w]').forEach(b=>b.addEventListener('click',()=>setWalk(b.dataset.w)));
   if($('#walk-add'))$('#walk-add').addEventListener('click',()=>{ensureRealWalk();state.walkId=null;setWalk(REAL_ID);setPhase(1)});
-  const hasReal=userDef&&state.walks[REAL_ID].nodes.length;
-  $('#walk-tools').innerHTML=(userDef?`<label for="user-files">${T('menu.import')}</label><button class="linkish" id="walk-clear">${T('menu.clear')}</button><label class="noloc"><input type="checkbox" id="no-loc" ${noLocation?'checked':''}> ${T('menu.noLoc')}</label><span>${T('menu.privacy')}</span>`:'')+
+  const hasReal=userDef&&state.walks[REAL_ID].nodes.length,hasRealNow=hasReal;
+  $('#walk-tools').innerHTML=(userDef?`<label for="user-files">${T('menu.import')}</label>${hasRealNow&&savedOn()?`<button class="linkish" id="walk-savenew" style="color:var(--route)">${T('menu.saveNew')}</button>`:''}<button class="linkish" id="walk-clear">${T('menu.clear')}</button><label class="noloc"><input type="checkbox" id="no-loc" ${noLocation?'checked':''}> ${T('menu.noLoc')}</label><span>${T('menu.privacy')}</span>`:'')+
     (hasReal?`<button class="linkish" id="bk-save" style="color:var(--route)">${T('menu.backup')}</button><label class="noloc"><input type="checkbox" id="bk-pos"> ${T('menu.backup.pos')}</label>`:'')+
     `<label for="backup-in">${T('menu.restore')}</label>`;
   if($('#bk-save'))$('#bk-save').addEventListener('click',exportBackup);
   if($('#no-loc'))$('#no-loc').addEventListener('change',e=>{noLocation=e.target.checked;try{localStorage.setItem('tc-no-location',noLocation?'1':'0')}catch(_){}toast(noLocation?T('menu.noLoc.on'):T('menu.noLoc.off'))});
   if($('#walk-clear'))$('#walk-clear').addEventListener('click',askClearReal);
+  if($('#walk-savenew'))$('#walk-savenew').addEventListener('click',saveAndStartNew);
   renderSavedWalks();
   renderDev();
 }
@@ -2789,17 +2790,27 @@ const savedLabel=m=>T('saved.item',{date:m.from!=null&&!m.unknownOnly?new Date(m
 async function saveOldWalkInApp(wk){
   try{const n=await window.TCStore.moveWalk(REAL_ID,'S'+Date.now(),savedMetaOf(wk));if(!n)throw new Error('empty');newWalkSaved='app';return true}
   catch(_){toast(T('nw.saveFail'),4000);return false}}
-let savedThumbs=[];
+let savedThumbs=[],savedSig=null,savedRun=0;
 async function renderSavedWalks(){const box=$('#saved-walks');if(!box)return;
-  if(!savedOn()||!userDef){box.hidden=true;return}
+  if(!savedOn()||!userDef){box.hidden=true;savedSig=null;return}
+  const run=++savedRun;
   let list=[];try{list=(await window.TCStore.listMeta()).filter(m=>/^S\d+$/.test(m.walk)).sort((a,b)=>(b.savedAt||0)-(a.savedAt||0))}catch(_){}
+  if(run!==savedRun)return; // あとから始まった描き直しがある
+  const sig=LANG+'|'+list.map(m=>m.walk+':'+(m.n||0)).join(',');if(sig===savedSig)return; // 変わっていなければ描き直さない（写真を読み直さない）
+  if(!list.length){savedThumbs.forEach(u=>{try{URL.revokeObjectURL(u)}catch(_){}});savedThumbs=[];box.hidden=true;box.innerHTML='';savedSig=sig;return}
+  const rows=await Promise.all(list.map(async m=>{let blob=null;try{const r=await window.TCStore.first(m.walk);if(r&&r.blob)blob=r.blob}catch(_){}return{m,blob}}));
+  if(run!==savedRun)return;
   savedThumbs.forEach(u=>{try{URL.revokeObjectURL(u)}catch(_){}});savedThumbs=[];
-  if(!list.length){box.hidden=true;box.innerHTML='';return}
-  const rows=await Promise.all(list.map(async m=>{let src='';try{const r=await window.TCStore.load(m.walk);if(r[0]&&r[0].blob){src=URL.createObjectURL(r[0].blob);savedThumbs.push(src)}if(!m.n)m.n=r.length}catch(_){}return{m,src}}));
+  rows.forEach(r=>{r.src=r.blob?URL.createObjectURL(r.blob):'';if(r.src)savedThumbs.push(r.src)});savedSig=sig;
   box.innerHTML=`<h4>${T('saved.h')}</h4><small>${T('saved.lead')}</small>`+rows.map(({m,src},i)=>`<div class="sw-item">${src?`<img src="${src}" alt="">`:''}<span>${esc(savedLabel(m))}</span><button type="button" class="main" data-open="${i}">${T('saved.open')}</button><button type="button" data-del="${i}">${T('saved.del')}</button></div>`).join('');
   box.hidden=false;
   box.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSavedWalk(rows[+b.dataset.open].m,rows[+b.dataset.open].src)));
   box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deleteSavedWalk(rows[+b.dataset.del].m,rows[+b.dataset.del].src)))}
+// メニュー・はじめの画面から：今の散歩を保存して、新しく始める
+async function saveAndStartNew(){const wk=state.walks[REAL_ID];if(!savedOn()||!wk||!wk.nodes.length)return false;
+  if(pl.playing)pause();stopAudition();newWalkSaved=false;
+  if(!(await saveOldWalkInApp(wk)))return false;
+  await clearRealNow(wk);newWalkAsked=true;renderWalkRow();setPhase(1);toast(T('nw.started')+T('nw.savedIn'),5000);return true}
 // 開く：今の散歩（写真があれば）を保存した散歩に入れてから、選んだ散歩を今の散歩にする
 async function openSavedWalk(m,src){
   const wk=ensureRealWalk(),now=wk.nodes.length;
@@ -2815,7 +2826,7 @@ async function openSavedWalk(m,src){
   walkStatus=null;setStatus(STATUS_JA[m.status]?m.status:'finished');newWalkAsked=true;
   if(state.walkId!==REAL_ID){state.walkId=null;setWalk(REAL_ID)}
   if(SHELL)$('#menu').hidden=true;
-  renderWalkRow();setPhase(walkStatus==='recording'?1:walkStatus==='composed'?3:2);
+  renderWalkRow();setPhase(walkStatus==='composed'?3:2); // 開いた散歩の中身が見えるように（記録の途中だった散歩も「2 なおす」。カメラは開かない）
   toast(now?T('saved.open.done',{n:now}):T('saved.open.doneEmpty'),4000);ensureSong(wk).then(renderWalkRow)}
 async function deleteSavedWalk(m,src){
   const v=await askChoice({title:T('saved.del.title'),text:T('saved.del.text',{label:savedLabel(m)}),imgs:src?[{src,cap:''}]:[],options:[['yes',T('saved.del'),true],['no',T('edit.cancel')]]});
@@ -2846,7 +2857,7 @@ async function askNewWalk(wk,news,fromCam){
   const old=sorted(wk),last=old[old.length-1],t=oldTimes(wk),fresh=news.filter(n=>!n.timeUnknown&&farDay(t,n.ts)).sort((a,b)=>a.ts-b.ts)[0];
   const imgs=[{src:last.src,cap:T('nw.capOld',{date:dayJa(Math.max(...t))})}];if(fresh)imgs.push({src:fresh.src,cap:T('nw.capNew',{date:dayJa(fresh.ts)})});
   for(;;){
-    const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:fromCam?T('nw.textCam'):T('nw.text',{m:news.length}),imgs,
+    const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:(fromCam?T('nw.textCam'):T('nw.text',{m:news.length}))+(savedOn()?SEP+T('nw.hint'):''),imgs,
       options:[['save',T('nw.save'),true],['drop',T('nw.drop')],['add',fromCam?T('nw.continue'):T('nw.add')],...(fromCam?[]:[['cancel',T('nw.cancel')]])]});
     if(v==='add'||v==='cancel')return v;
     if(v==='save'){if(await (savedOn()?saveOldWalkInApp(wk):saveOldWalk(wk))){await clearRealNow(wk);renderSavedWalks();return'new'}continue} // 保存をやめた・失敗した：消さずに、もう一度聞く（アプリの中に保存するときは、移せなかったときだけ）
@@ -4377,7 +4388,10 @@ let resumeAsked=false; // 前の散歩が残っているときの「つづきか
 function startTry(){tlStop();$('#start').hidden=true;$('#tut').hidden=true;const real=ensureRealWalk();if(state.walkId!==REAL_ID){state.walkId=null;setWalk(REAL_ID)}
   const n=real.nodes.length,ph=!n?1:walkStatus==='composed'?3:walkStatus==='finished'?2:1;setPhase(ph);
   if(n&&FEATURES.resumeAsk!==false&&!resumeAsked){resumeAsked=true;newWalkAsked=true;const first=sorted(real)[0];
-    askChoice({title:T('start.resume.title'),text:T('start.resume.text',{n}),imgs:first?[{src:first.src,cap:''}]:[],options:[['go',T('start.resume.go'),true],['new',T('start.resume.new')]]}).then(v=>{if(v==='new')askClearReal()});return}
+    askChoice({title:T('start.resume.title'),text:T(savedOn()?'start.resume.textSave':'start.resume.text',{n}),imgs:first?[{src:first.src,cap:''}]:[],options:[['go',T('start.resume.go'),true],['new',T('start.resume.new')]]}).then(async v=>{if(v!=='new')return;
+      if(!savedOn()){askClearReal();return} // 保存した散歩（2026-11-17）：新しく始めるときも、保存するかを選べる
+      const y=await askChoice({title:T('start.new.title'),text:T('start.new.text',{n})+SEP+T('nw.hint'),imgs:first?[{src:first.src,cap:''}]:[],options:[['save',T('nw.save'),true],['drop',T('nw.drop')],['no',T('edit.cancel')]]});
+      if(y==='save')saveAndStartNew();else if(y==='drop')askClearReal()});return}
   if(SHELL&&FEATURES.coach!==false&&!coachSeen()){setTimeout(coachStart,350);return}
   if(!n)toast(T('coach.toast'),3500)}
 /* ステップ1 の「♪ 曲を聴く」：ここまでの写真の曲を聴く画面へ。まだ写真がなければ、サンプルの散歩の曲を聴く */

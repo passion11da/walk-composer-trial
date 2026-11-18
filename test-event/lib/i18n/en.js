@@ -184,6 +184,10 @@ window.TC_I18N.en={
  "saved.del.done": "Deleted the saved walk",
  "saved.fail": "Something went wrong. Your walks are unchanged",
  "nw.savedIn": ". You can open the previous walk from \"Saved walks\" in the menu",
+ "nw.hint": "If you save it, you can open it anytime from \"Saved walks\" in the menu.",
+ "menu.saveNew": "Save this walk and start a new one",
+ "start.new.title": "Save the previous walk?",
+ "start.new.text": "You have {n} photos from before.",
  "img.lost": "This photo can no longer be read",
  "img.lost.sub": "Please import it again",
  "imp.check.title": "Added {ok} photos (This walk has {total} in total)",
@@ -753,6 +757,7 @@ window.TC_I18N.en={
  "spfd.ev3": "③ Semantic association",
  "start.resume.title": "Your last walk is still here",
  "start.resume.text": "You have {n} photos from before. Continue that walk? Starting a new walk deletes the old photos and notes from this device.",
+ "start.resume.textSave": "You have {n} photos from before. Continue from there? If you start a new walk, you can choose to save the previous one.",
  "start.resume.go": "Continue",
  "start.resume.new": "Start new walk"
 };
