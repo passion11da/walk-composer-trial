@@ -744,6 +744,7 @@ tr.click:hover td{background:var(--soft)}
   <header class="top">
     <div class="eyebrow" id="ver-eyebrow">開発版 · Web版</div>
     <h1>タイムラプス・コンポーザー</h1>
+    <button type="button" class="btn-line" id="go-proc" style="background:var(--route);border-color:var(--route);color:#fff;font-weight:700">▶ 発表：写真から曲まで通して見る</button> <button type="button" class="btn-line" id="go-zukan">対応の一覧</button>
     <p class="lead">歩いた時間が、そのまま曲の長さになる。散歩中は写真を1枚と一言だけ残し、帰ってから書き足す。最後に約3分の曲を聴きながら、地図の上でその散歩を辿り直す。</p>
   </header>
 
@@ -921,6 +922,7 @@ tr.click:hover td{background:var(--soft)}
               <button type="button" class="start-b main" id="st-tut">つかいかたを見る</button>
               <button type="button" class="start-b" id="st-try">やってみる</button>
               <span class="start-v" id="start-ver"></span>
+              <button type="button" class="start-dev" id="st-proc" hidden style="font-weight:700">▶ 発表：写真から曲まで通して見る</button>
             </div>
           </div>
         <div class="toast" id="toast">保存しました</div>
@@ -2444,6 +2446,11 @@ async function zkStart(walkId){const id=walkId||'E';if(!state.walks[id]){toast('
   await openSanpofuForWalk();spfSelect(0)}
 $('#zk-start').addEventListener('click',()=>zkStart('E'));$('#zk-table-dev').addEventListener('click',zkTableOpen);
 // URL に ?proc=E（見本の散歩の名前）を付けると、開いてすぐ通して見る。&pt=3 で地点3から。?zukan=1 で対応の一覧（開発版だけ。ゼミで直接開くため）
+// 発表用のボタン（2026-11-18）：開発版の画面の上の「▶ 発表：写真から曲まで通して見る」・「対応の一覧」。体験版の画面（開発版の中）のはじめの画面にも同じボタンを出し、押すと開発版の画面に戻してから開く
+if(!TRIAL){const goProc=()=>{if(PREVIEW){try{sessionStorage.setItem('tc-go-proc','E');localStorage.removeItem('tc-preview-trial')}catch(_){}location.reload();return}zkStart('E')};
+  if($('#go-proc'))$('#go-proc').addEventListener('click',goProc);if($('#go-zukan'))$('#go-zukan').addEventListener('click',()=>zkTableOpen());
+  const sp=$('#st-proc');if(sp){sp.hidden=!PREVIEW||PV_FRAME;sp.addEventListener('click',goProc)}
+  if(!PREVIEW){let g=null;try{g=sessionStorage.getItem('tc-go-proc');sessionStorage.removeItem('tc-go-proc')}catch(_){}if(g)setTimeout(()=>zkStart(g),900)}}
 if(!TRIAL&&!PREVIEW){const q=/[?&]proc=([A-Z])/.exec(location.search),pt=/[?&]pt=(\d+)/.exec(location.search);if(q)setTimeout(async()=>{await zkStart(q[1]);if(pt)spfSelect(Math.max(0,+pt[1]-1))},900);if(/[?&]zukan=1/.test(location.search))setTimeout(zkTableOpen,900)}
 // 再生中の位置の縦線（段B〜段F）
 function spfCursor(p){if(!SPF.view||!SPF.geo)return;const el=document.getElementById('spf-cur');if(!el)return;const x=SPF.geo.PADL+p/sBar(SPF.view.song)*SPF.geo.BW;el.setAttribute('x1',x);el.setAttribute('x2',x);el.setAttribute('opacity',p>0?1:0);zkSerialCur(p)}
@@ -2856,8 +2863,14 @@ async function askNewWalk(wk,news,fromCam){
   newWalkAsked=true;
   const old=sorted(wk),last=old[old.length-1],t=oldTimes(wk),fresh=news.filter(n=>!n.timeUnknown&&farDay(t,n.ts)).sort((a,b)=>a.ts-b.ts)[0];
   const imgs=[{src:last.src,cap:T('nw.capOld',{date:dayJa(Math.max(...t))})}];if(fresh)imgs.push({src:fresh.src,cap:T('nw.capNew',{date:dayJa(fresh.ts)})});
+  // 保存した散歩が使えるときは、聞くのは「新しい散歩にする／この散歩に足す」の2つだけ。前の散歩はいつも「保存した散歩」に入れる（消すのはメニューからだけ。2026-11-18 飯田）
+  if(savedOn()){
+    const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:fromCam?T('nw.textCam2'):T('nw.text2'),imgs,options:[['new',T('nw.new'),true],['add',fromCam?T('nw.continue'):T('nw.add')]]});
+    if(v!=='new')return'add';
+    if(await saveOldWalkInApp(wk)){await clearRealNow(wk);renderSavedWalks();return'new'}
+    toast(T('nw.saveFailAdd'),4000);return'add'} // 保存できなかったときは、消さずに今の散歩に足す（写真をなくさない）
   for(;;){
-    const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:(fromCam?T('nw.textCam'):T('nw.text',{m:news.length}))+(savedOn()?SEP+T('nw.hint'):''),imgs,
+    const v=await askChoice({title:T('nw.title',{date:dayJa(Math.max(...t)),n:old.length}),text:(fromCam?T('nw.textCam'):T('nw.text',{m:news.length})),imgs,
       options:[['save',T('nw.save'),true],['drop',T('nw.drop')],['add',fromCam?T('nw.continue'):T('nw.add')],...(fromCam?[]:[['cancel',T('nw.cancel')]])]});
     if(v==='add'||v==='cancel')return v;
     if(v==='save'){if(await (savedOn()?saveOldWalkInApp(wk):saveOldWalk(wk))){await clearRealNow(wk);renderSavedWalks();return'new'}continue} // 保存をやめた・失敗した：消さずに、もう一度聞く（アプリの中に保存するときは、移せなかったときだけ）
@@ -4389,9 +4402,8 @@ function startTry(){tlStop();$('#start').hidden=true;$('#tut').hidden=true;const
   const n=real.nodes.length,ph=!n?1:walkStatus==='composed'?3:walkStatus==='finished'?2:1;setPhase(ph);
   if(n&&FEATURES.resumeAsk!==false&&!resumeAsked){resumeAsked=true;newWalkAsked=true;const first=sorted(real)[0];
     askChoice({title:T('start.resume.title'),text:T(savedOn()?'start.resume.textSave':'start.resume.text',{n}),imgs:first?[{src:first.src,cap:''}]:[],options:[['go',T('start.resume.go'),true],['new',T('start.resume.new')]]}).then(async v=>{if(v!=='new')return;
-      if(!savedOn()){askClearReal();return} // 保存した散歩（2026-11-17）：新しく始めるときも、保存するかを選べる
-      const y=await askChoice({title:T('start.new.title'),text:T('start.new.text',{n})+SEP+T('nw.hint'),imgs:first?[{src:first.src,cap:''}]:[],options:[['save',T('nw.save'),true],['drop',T('nw.drop')],['no',T('edit.cancel')]]});
-      if(y==='save')saveAndStartNew();else if(y==='drop')askClearReal()});return}
+      if(!savedOn()){askClearReal();return}
+      saveAndStartNew()});return} // 前の散歩はいつも「保存した散歩」に入れる（2026-11-18 飯田：保存するか消すかは聞かない）
   if(SHELL&&FEATURES.coach!==false&&!coachSeen()){setTimeout(coachStart,350);return}
   if(!n)toast(T('coach.toast'),3500)}
 /* ステップ1 の「♪ 曲を聴く」：ここまでの写真の曲を聴く画面へ。まだ写真がなければ、サンプルの散歩の曲を聴く */

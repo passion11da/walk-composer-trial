@@ -145,7 +145,7 @@ window.TC_I18N.en={
  "imp.done.heic": "({n} of them are in iPhone HEIC format and can't be opened in this browser. Open in Safari, or shoot with Settings → Camera → Formats → Most Compatible on your iPhone)",
  "imp.done.dup": ". Skipped {n} photos that were already in this walk",
  "imp.done.dupTime": " (set the shooting time for {n} of them that had no time)",
- "nw.title": "A previous walk ({date}, {n} photos) is still here",
+ "nw.title": "A previous walk ({date}, {n} photos) is here",
  "nw.text": "Some of the new photos ({m}) are from a different day. What should we do with the previous walk?",
  "nw.textCam": "Today is a different day from the previous walk. Before you start, what should we do with it?",
  "nw.save": "Save it and start a new walk",
@@ -185,6 +185,10 @@ window.TC_I18N.en={
  "saved.fail": "Something went wrong. Your walks are unchanged",
  "nw.savedIn": ". You can open the previous walk from \"Saved walks\" in the menu",
  "nw.hint": "If you save it, you can open it anytime from \"Saved walks\" in the menu.",
+ "nw.new": "Start a new walk",
+ "nw.text2": "These photos are from a different day. If you start a new walk, the previous one is not deleted; it stays in \"Saved walks\" in the menu.",
+ "nw.textCam2": "Today is a different day from the previous walk. If you start a new walk, the previous one is not deleted; it stays in \"Saved walks\" in the menu.",
+ "nw.saveFailAdd": "Could not save the previous walk, so the photos were added to it",
  "menu.saveNew": "Save this walk and start a new one",
  "start.new.title": "Save the previous walk?",
  "start.new.text": "You have {n} photos from before.",
@@ -757,7 +761,7 @@ window.TC_I18N.en={
  "spfd.ev3": "③ Semantic association",
  "start.resume.title": "Your last walk is still here",
  "start.resume.text": "You have {n} photos from before. Continue that walk? Starting a new walk deletes the old photos and notes from this device.",
- "start.resume.textSave": "You have {n} photos from before. Continue from there? If you start a new walk, you can choose to save the previous one.",
+ "start.resume.textSave": "You have {n} photos from before. Continue from there? If you start a new walk, the previous one is not deleted; it stays in \"Saved walks\" in the menu.",
  "start.resume.go": "Continue",
  "start.resume.new": "Start new walk"
 };
