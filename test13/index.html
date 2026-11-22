@@ -254,6 +254,36 @@ body.spf-open{overflow:hidden}
 .zk-sv-gap svg{width:52px;height:30px}.zk-sv-gap b{color:var(--ink);font-size:10.5px}
 .zk-sv-dt{font-size:9.5px}
 
+
+/* 風景と音の図鑑（本の形。2026-11-22 図鑑担当） */
+.zb{max-width:880px;margin:0 auto;font-size:16px;line-height:1.85}
+.zb-cover{text-align:center;padding:28px 8px 18px;border-bottom:1px solid var(--line)}.zb-cover h1{font-family:var(--f-display);font-size:clamp(30px,5vw,46px);margin:0 0 8px;letter-spacing:.08em}
+.zb-mute{color:var(--mute);font-size:13.5px}.zb-warn{color:var(--rec);font-size:14px}
+.zb-toc{padding:14px 0 22px;border-bottom:1px solid var(--line)}.zb-toc h2{font-family:var(--f-display);font-size:22px;margin:6px 0}
+.zb-toc-part{margin:12px 0}.zb-toc-part a{color:var(--ink);text-decoration:none;font-size:17px}.zb-toc-part p{margin:2px 0 4px}.zb-toc-part ul{margin:0;padding-left:1.2em;font-size:14.5px}.zb-toc-part li{margin:2px 0}
+.zb-part{padding:26px 0 10px;border-bottom:1px solid var(--line)}.zb-part-h small{font-family:var(--f-mono);color:var(--route);letter-spacing:.12em}
+.zb-part-h h2{font-family:var(--f-display);font-size:clamp(28px,4.5vw,40px);margin:0}.zb-range{color:var(--mute);font-size:13.5px;margin:2px 0}
+.zb-lead{font-size:18px;margin:8px 0 14px}.zb-part h3{font-size:18px;margin:22px 0 2px;border-left:3px solid var(--route);padding-left:8px}.zb-lead2{color:var(--mute);margin:0 0 8px;font-size:14.5px}
+.zb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:12px}
+.zb-card{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:10px;padding:0 0 8px;cursor:pointer;overflow:hidden;font:inherit}
+.zb-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.zb-noimg{width:100%;aspect-ratio:4/1.4;display:flex;align-items:center;justify-content:center;background:var(--line);color:var(--mute);font-size:12px}
+.zb-card.quiet img{filter:grayscale(.85);opacity:.75}
+.zb-cn{padding:4px 10px 0;font-weight:700;font-size:15.5px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}.zb-cn small{font-family:var(--f-mono);color:var(--mute);font-weight:400}
+.zb-look{padding:0 10px;font-size:13px;color:var(--mute);line-height:1.5}.zb-now{padding:0 10px;font-size:11.5px;color:var(--route)}.zb-card.quiet .zb-now{color:var(--mute)}
+.zb-star{font-size:13px;color:#c8962e;font-weight:400}.zb-star.none{color:var(--line)}
+.zb-up{margin:16px 0 6px;padding:10px 14px;border:1px dashed var(--line);border-radius:10px}.zb-up h4{margin:0 0 4px;font-size:14px;color:var(--mute)}.zb-up ul{margin:0;padding-left:1.2em;font-size:14px;color:var(--mute)}
+.zb-link{font:inherit;background:none;border:0;color:var(--route);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.zb-page{padding:6px 0 24px}.zb-pnav{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.zb-pgh{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}.zb-no{font-family:var(--f-mono);font-size:22px;color:var(--route)}.zb-pgh h2{font-family:var(--f-display);font-size:clamp(30px,5vw,44px);margin:0}
+.zb-pre{font-style:italic;color:var(--mute)}.zb-orn{text-align:center;color:var(--mute);letter-spacing:.3em;margin:14px 0}
+.zb-k{display:block;font-size:12.5px;color:var(--route);letter-spacing:.08em;margin-bottom:2px}
+.zb-find b,.zb-because b{font-size:19px;display:block;margin-bottom:4px}.zb-find,.zb-because,.zb-try,.zb-look2{margin:12px 0}
+.zb-look2{font-size:14.5px;color:var(--mute)}.zb-try{border-left:3px solid var(--route);padding-left:12px}
+.zb-ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin:14px 0 4px}.zb-ex figure{margin:0}.zb-ex img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block}
+.zb-ex figcaption{font-size:13px;color:var(--mute);display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:3px}
+.zb-play{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;padding:2px 10px;cursor:pointer;white-space:nowrap}.zb-play.on{background:var(--route);color:#fff;border-color:var(--route)}
+.zb-num{margin-top:16px;font-size:13px;color:var(--mute)}.zb-num summary{cursor:pointer}
+.zb-pager{display:flex;justify-content:space-between;gap:10px;margin-top:18px;border-top:1px solid var(--line);padding-top:10px;flex-wrap:wrap}
 /* 発表の画面（2026-11-18、飯田「初見の人にも、しくみがわかりやすく見やすく」「1枚目だけ解説、ほかは同様に…として散歩譜と曲」） */
 #pres,#pbook{position:fixed;inset:0;z-index:60;background:var(--sheet);color:var(--ink);display:flex;flex-direction:column}
 #pbook{z-index:62}
@@ -1164,9 +1194,9 @@ tr.click:hover td{background:var(--soft)}
   <input type="file" id="spf-file" accept=".json,application/json" hidden>
 </div>
 <div id="pres" hidden role="dialog" aria-label="写真が音楽になるまで"><div class="pr-top"><b>写真が音楽になるまで</b><span class="pr-dots" id="pr-dots"></span><button type="button" id="pr-book">パタン図鑑</button><button type="button" id="pr-close">閉じる</button></div><div class="pr-body" id="pr-body"></div><div class="pr-nav"><button type="button" id="pr-prev">◀ もどる</button><span class="pr-mute" id="pr-count"></span><button type="button" class="main" id="pr-next">つぎへ ▶</button></div></div>
-<div id="pbook" hidden role="dialog" aria-label="パタン図鑑"><div class="pr-top"><b>パタン図鑑：風景のどこを見て、音のどこが変わるか</b><button type="button" id="pb-table">台帳の表で見る</button><button type="button" id="pb-close">閉じる</button></div><div class="pr-body" id="pb-body"></div></div>
+<div id="pbook" hidden role="dialog" aria-label="パタン図鑑"><div class="pr-top"><b>パタン図鑑：風景のどこを見て、音のどこが変わるか</b><button type="button" id="pb-toc">目次</button><button type="button" id="pb-table">台帳の表で見る</button><button type="button" id="pb-close">閉じる</button></div><div class="pr-body" id="pb-body"></div></div>
 <div id="zk-table" hidden role="dialog" aria-label="図鑑の台帳：対応の一覧"><div class="zk-tbar"><b>図鑑の台帳：風景と音の対応の一覧</b><button type="button" class="spf-x" id="zk-table-print">印刷</button><button type="button" class="spf-x" id="zk-table-close">閉じる</button></div><div id="zk-table-body"></div></div>
-<script>window.TC_TRIAL={"version": "1.3-test", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": false, "cloud": true, "skyAny": true, "skyClean": true, "plantDark": true, "placeView": true, "placeCells": true, "placeOpen45": true, "ex16Mel": true, "ex16Sky": false, "ex16Acc": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": false, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "tutListen": true, "i18n": true, "resumeAsk": true, "dedupImport": true, "newWalkAsk": true, "imgLost": true, "eventLoc": false, "savedWalks": true, "flowerFix": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false, "spaceSec": true, "trackCos": true, "secSound": true, "secSound2": true, "procView": true, "serialView": true}};</script>
+<script>window.TC_TRIAL={"version": "1.3-test", "features": {"open": true, "bright": true, "sat": true, "horizon": true, "pan": true, "shadow": true, "contrast": true, "warmth": true, "highlight": true, "diversity": true, "topHeavy": true, "texture": true, "skyline": false, "cloud": true, "skyAny": true, "skyClean": true, "plantDark": true, "placeView": true, "placeCells": true, "placeOpen45": true, "ex16Mel": true, "ex16Sky": false, "ex16Acc": true, "pluckMel": true, "minBars2": true, "skyFill": true, "bellCap": true, "calib10": true, "landmark": false, "transitions": true, "colorHalf": true, "songLength": true, "style": true, "mood": true, "sabi": true, "sabiAsk": true, "research": true, "quizTools": true, "soundGuide": true, "tutListen": true, "i18n": true, "resumeAsk": true, "dedupImport": true, "newWalkAsk": true, "imgLost": true, "eventLoc": false, "savedWalks": true, "flowerFix": true, "spfPdf": true, "popEdit": true, "realSamples": true, "lastMean": true, "dtRel": true, "cityType": true, "surround": true, "night": true, "noSections": true, "place": true, "ground": true, "appShell": true, "styleAll": false, "spaceSec": true, "trackCos": true, "secSound": true, "secSound2": true, "procView": true, "serialView": true, "zukanBook": false}};</script>
 <script src="lib/analysis.js" charset="utf-8"></script>
 <script src="lib/samples.js" charset="utf-8"></script>
 <script src="lib/exif.js" charset="utf-8"></script>
@@ -1174,6 +1204,7 @@ tr.click:hover td{background:var(--soft)}
 <script src="lib/store.js" charset="utf-8"></script>
 <script src="lib/i18n/ja.js" charset="utf-8"></script>
 <script src="lib/i18n/en.js" charset="utf-8"></script>
+<script src="lib/i18n/zukan-en.js" charset="utf-8"></script>
 <script>
 (async()=>{
 const $=s=>document.querySelector(s);
@@ -1262,6 +1293,7 @@ const FEATURE_LIST=[
   {id:'trackCos',name:'散歩譜の軌跡：東西と南北を同じ長さにそろえる（経度を緯度に合わせて縮める。2026-11-13）',off:'経度をそのまま使う（前の形。日本では東西が約2割のびる）'},
   {id:'procView',name:'T-109 散歩譜の区間を押すと、写真から散歩譜までを ①整える〜⑧散歩譜 で通して見せる（逆引き・対応の一覧つき。図鑑担当 2026-11-16）。表示だけ（音は変わらない）',off:'今までの「内部の処理の列」'},
   {id:'serialView',name:'T-109【3】散歩譜の上に「連続する眺め」：写真を大きく並べ、写真と写真の間に移り変わり（開け・狭まり・境目・目印・立ち止まり）の記号、写真の下に現れた要素。押すと通して見る（図鑑担当 2026-11-16）。表示だけ',off:'出さない'},
+  {id:'zukanBook',name:'図鑑を本の形に（目次・3つの部・1ページの形・具体例の写真と ▶ その写真の音。図鑑担当 2026-11-22）。表示だけ',off:'台帳のカードを章ごとに並べる（11/18 の試し版）'},
   {id:'spaceSec',name:'T-089 散歩譜に「空間の段」（試作）：軌跡の切断線・見えの断面・断面から音へ。描くだけ（音は変わらない）',off:'散歩譜は今までの段だけ'},
   {id:'popEdit',name:'25 吹き出しに場所の性格・その場で気分とサビを直す',off:'吹き出しは写真・一言・メモだけ（今まで）。編集画面の写真の詳細にも場所の性格を出さない'},
   {id:'realSamples',name:'D-27 サンプルの散歩を実写の写真に',off:'サンプルの散歩A・B・Cは描いた絵（今まで）'},
@@ -1956,7 +1988,8 @@ async function fuNumber(song){
 // 軌跡の形：散歩の範囲で 0〜1 にならす（緯度・経度は入れない）
 function trackShape(nodes){
   if(nodes.length&&nodes.every(n=>n.track))return nodes.map(n=>n.track); // 散歩譜ファイルから読んだ形はそのまま
-  const pts=nodes.map(n=>n.lat!=null&&n.lng!=null?[n.lng,n.lat]:n.e!=null&&n.n!=null?[n.e,n.n]:null);
+  // 2026-11-22（飯田）：位置の記録がない写真は、アプリが地図に置いた仮の位置（posUnknown）を軌跡に使わない（本物の道のように見えてしまうため）。見本の散歩の位置（e・n）はそのまま
+  const pts=nodes.map(n=>n.lat!=null&&n.lng!=null?[n.lng,n.lat]:n.e!=null&&n.n!=null&&!n.posUnknown?[n.e,n.n]:null);
   // 2026-11-13（T-089 の整合のチェック、飯田「直す」）：緯度・経度の軌跡は、経度を cos（散歩のまん中の緯度）で縮めて、東西と南北を同じ長さにそろえる（世界のどこでも。
   // 前は縮めていなかったので、北緯 35°で東西が約 1.22 倍にのびていた）。日付変更線をまたぐ散歩は、経度をつなげてから。開発用 ON/OFF「trackCos」。OFF で前の形。音には関係しない
   if(FEATURES.trackCos!==false){const ll=nodes.map((n,i)=>n.lat!=null&&n.lng!=null?i:-1).filter(i=>i>=0);if(ll.length){
@@ -2157,7 +2190,9 @@ function spfSvg(view,mode='color',optIn){
 }
 // 段A 軌跡（形だけ。背景の地図なし。地点の番号を場所の性格の色で）
 function spfTrack(view,bw){
-  const {song,nodes}=view,sh=nodes.map(n=>n.track||null),tr=sh.some(Boolean)?sh:trackShape(nodes);if(!tr)return'';
+  const {song,nodes}=view,sh=nodes.map(n=>n.track||null);let tr=sh.some(Boolean)?sh:trackShape(nodes);
+  // 2026-11-22（飯田）：位置の記録がない散歩は、配置図の代わりに、歩いた順に左から右へ横一列に並べる（距離・向きは表さない。切断線と番号は残す）
+  const row=!tr&&nodes.length>0;if(row)tr=nodes.map((n,i)=>[nodes.length>1?i/(nodes.length-1):.5,.5]);if(!tr)return'';
   const place=new Map();song.items.forEach((it,i)=>it.members.forEach(m=>place.set(m,{p:it.place,i})));
   const SPc=spaceOn(bw),S=SPc?250:150,P=SPc?46:12,pt=tr.map(v=>v?[P+v[0]*(S-2*P),P+v[1]*(S-2*P)]:null);
   // T-089：撮った地点ごとの切断線（進む向きに直角。1-1' のように、右はしに ' を付ける）
@@ -2166,7 +2201,7 @@ function spfTrack(view,bw){
       let dx=b[0]-a[0],dy=b[1]-a[1];const l=Math.hypot(dx,dy);if(l<1e-6){dx=1;dy=0}else{dx/=l;dy/=l}const nx=-dy,ny=dx;let r=15,q=null;
       for(const rr of [15,27,39,51]){r=rr;q=[p[0]+nx*(rr+8),p[1]+ny*(rr+8)];if(placed.every(o=>far(o,q)>=15)&&all.every(o=>far(o,q)>=11))break}placed.push(q);
       return`<line x1="${(p[0]-nx*15).toFixed(1)}" y1="${(p[1]-ny*15).toFixed(1)}" x2="${(p[0]+nx*r).toFixed(1)}" y2="${(p[1]+ny*r).toFixed(1)}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="6 2 1 2"/><text x="${q[0].toFixed(1)}" y="${(q[1]+4).toFixed(1)}" font-size="12" text-anchor="middle" fill="var(--ink)">${i+1}'</text>`}).join('')+
-      `<path d="M${S-16},26V8M${S-20},14L${S-16},8L${S-12},14" fill="none" stroke="var(--ink)" stroke-width="1"/><text x="${S-16}" y="38" font-size="12" text-anchor="middle" fill="var(--ink)">N</text><text x="4" y="${S-5}" font-size="12" fill="var(--mute)">縮尺なし</text>`})():'';
+      (row?`<text x="4" y="16" font-size="12" fill="var(--mute)">位置の記録なし</text><text x="4" y="${S-20}" font-size="12" fill="var(--mute)">歩いた順に左から右へ</text><text x="4" y="${S-5}" font-size="12" fill="var(--mute)">（距離・向きは表さない）</text>`:`<path d="M${S-16},26V8M${S-20},14L${S-16},8L${S-12},14" fill="none" stroke="var(--ink)" stroke-width="1"/><text x="${S-16}" y="38" font-size="12" text-anchor="middle" fill="var(--ink)">N</text><text x="4" y="${S-5}" font-size="12" fill="var(--mute)">縮尺なし</text>`)})():'';
   const path=pt.filter(Boolean).map(p=>p.join(',')).join(' ');
   return`<svg viewBox="0 0 ${S} ${S}" width="${S}" height="${S}" aria-label="${T('spf.track.aria')}"><polyline points="${path}" fill="none" stroke="${bw?'#000':'var(--route)'}" stroke-width="1.5" stroke-linejoin="round"/>`+cuts+
     nodes.map((n,k)=>{const p=pt[k],q=place.get(n);if(!p||!q)return'';return`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${PLACE_FILL[q.p]}" stroke="var(--ink)" stroke-width=".6"/><text x="${p[0]}" y="${p[1]+3}" font-size="7" text-anchor="middle" fill="${q.p==='none'?'#000':'#fff'}">${q.i+1}</text>`}).join('')+'</svg>';
@@ -2259,6 +2294,24 @@ function zkLoad(){if(window.TC_ZUKAN)return Promise.resolve(window.TC_ZUKAN);if(
   ZK.loading=new Promise(res=>{const s=document.createElement('script');s.src='docs/zukan/pages.js';s.charset='utf-8';s.onload=()=>res(window.TC_ZUKAN||null);s.onerror=()=>res(null);document.head.appendChild(s)});return ZK.loading}
 // 2026-11-22（飯田「体験版に入れましょう」、1.3 の候補）：体験版でも、固定の ON/OFF（procView）に従う。1.2 の設定（trial-features.json）では OFF のまま
 const zkOn=()=>FEATURES.procView!==false;
+/* 2026-11-22（飯田「英語版もよろしく」）：散歩譜の空間の段・連続する眺め・通して見る・図鑑のカードを英語に。
+   これらの画面の言葉は日本語で組み立てているので、英語で開いたときだけ、画面に出た日本語を対訳表（lib/i18n/zukan-en.js。もとは docs/i18n/zukan-en.tsv）で置き換える。
+   長い言い回しから順に置き換え、数字は # の所に順に戻す。表にない所は日本語のまま残る。画面の組み立て（図鑑担当の受け持ち）は変えない。曲は変わらない */
+const ZKEN=(()=>{if(LANG==='ja'||!window.TC_ZK_EN)return null;
+  const JP=/[぀-ヿ㐀-鿿]/,NUM='[−\\-＋+]?\\d+(?:[.:]\\d+)?',rx=k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').split('#').join('('+NUM+')');
+  // 英語の画面では、場所の性格・音階・楽器・素材・街の種類・スタイルの名前と、時間（○分○秒）がもう英語で出る。その形の見出しも足す（ja.js・en.js の名前の組から）
+  const J=I18N.ja||{},E=I18N.en||{},names=Object.keys(J).filter(k=>/^(place|scale|ins|mat|city|style|sins)\./.test(k)&&!/\.(why|label|d)$/.test(k)&&E[k]&&J[k]!==E[k]).map(k=>[J[k],E[k]]).sort((a,b)=>b[0].length-a[0].length);
+  const fmt=[['#分#秒','# min # sec'],['#時間#分','# hr # min'],['#分','# min'],['#秒','# sec']],variant=k=>{let v=k;for(const [j,e] of names)v=v.split(j).join(e);for(const [j,e] of fmt)v=v.split(j).join(e);return v};
+  const W='\\u3041-\\u3096\\u30a1-\\u30fa\\u30fc\\u3400-\\u9fff',pairs=[];Object.entries(window.TC_ZK_EN).forEach(([k,v])=>{if(!JP.test(k))return;pairs.push([k,v]);const k2=variant(k);if(k2!==k&&JP.test(k2))pairs.push([k2,v])});
+  // 3文字以下の短い言葉（「音」「中」など）は、ほかの日本語の単語の途中では置き換えない
+  const list=pairs.sort((a,b)=>b[0].length-a[0].length).map(([k,v])=>{const lit=k.split('#').sort((a,b)=>b.length-a.length)[0],short=(k.match(new RegExp('['+W+']','g'))||[]).length<=3;return{lit,re:new RegExp(short?'(?<!['+W+'])'+rx(k)+'(?!['+W+'])':rx(k),'g'),v}});
+  const tr=s=>{if(!s||!JP.test(s))return s;let t=s.replace(/\s+/g,' ');for(const e of list){if(!JP.test(t))break;if(t.indexOf(e.lit)<0)continue;t=t.replace(e.re,(...m)=>{let k=1;return e.v.replace(/#/g,()=>m[k]!==undefined&&typeof m[k]==='string'?m[k++]:'')})}return t};
+  const fix=n=>{const v=n.nodeValue;if(v&&JP.test(v)){const t=tr(v);if(t!==v)n.nodeValue=t}};
+  const fixEl=el=>{['title','aria-label','alt'].forEach(a=>{const v=el.getAttribute&&el.getAttribute(a);if(v&&JP.test(v)){const t=tr(v);if(t!==v)el.setAttribute(a,t)}})};
+  const run=root=>{if(root.nodeType===3)return fix(root);if(root.nodeType!==1)return;fixEl(root);const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())fix(n);root.querySelectorAll('[title],[aria-label],[alt]').forEach(fixEl)};
+  const mo=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')fix(m.target);else if(m.type==='attributes')fixEl(m.target);else m.addedNodes.forEach(run)}});
+  ['#sanpofu','#zk-table'].forEach(q=>{const el=document.querySelector(q);if(el){run(el);mo.observe(el,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','alt']})}});
+  return{tr}})();
 const zkGet=(o,path)=>path.split('.').reduce((x,k)=>x==null?undefined:x[k],o);
 const zf=x=>x==null||isNaN(x)?'—':(+x).toFixed(2),zpc=x=>x==null||isNaN(x)?'—':Math.round(x*100)+'%';
 function zkPage(no){const d=window.TC_ZUKAN;return d&&d.pages.find(p=>p.no===no)}
@@ -2401,7 +2454,7 @@ async function zkDetail(i){const Z=await zkLoad();const v=SPF.view,it=v&&v.song.
   r6.push(row('きらめきのベル',`きらめき ${zf(p.highlight)}`,it.glint?`小節の頭に ${zpc(it.glint)} の確率`:'鳴らない',['35']));
   r6.push(row('ざらつき・強弱・低音・音色',`きめ ${zf(p.texture)}・明暗の差 ${zf(p.contrast)}・上下の重心 ${zf(p.topHeavy)}・温かさ ${zf(p.warmth)}`,`ノイズ ${zf(it.grain)}・ばらつき ${zf(it.velWidth)}・低音 ×${zf(it.bassMul)}・やわらかさ ${it.tri==null?'—':zf(it.tri)}`,['32','X3','X4','41']));
   const s6=step(6,`<table class="zk-t zk-plain"><thead><tr><th>音</th><th>この区間では</th><th>わけ（写真と時間から）</th></tr></thead><tbody>${r6p.join('')}</tbody></table>`+`<div class="ex-row"><button type="button" class="btn-line" id="zk-play">▶ この区間から聴く</button><span class="zk-mute">${it.mood||it.sabi?'気分・サビの指定もこの区間の音を変えている（写真と時間のほかに、音を決めるもの）':''}</span></div>
-    <details class="zk-more"><summary>数字で見る（開発用）</summary>${tbl(['音のつまみ','読んだ値','この区間では','台帳'],r6)}</details>`);
+    ${TRIAL?'':`<details class="zk-more"><summary>数字で見る（開発用）</summary>${tbl(['音のつまみ','読んだ値','この区間では','台帳'],r6)}</details>`}`);
   // ⑦ 時間
   const tot=song.items.reduce((s,x)=>s+x.bars,0),minb=F.minBars2!==false?K.MIN_BARS_91:K.MIN_BARS;
   const bar=`<svg viewBox="0 0 300 26" class="zk-bar">${song.items.map((x,k)=>{const x0=(x.startBar-1)/tot*300,w=x.bars/tot*300;return`<rect x="${x0.toFixed(1)}" y="${k===i?2:8}" width="${Math.max(.5,w-.6).toFixed(1)}" height="${k===i?22:10}" fill="${PLACE_FILL[x.place]}" stroke="${k===i?'var(--ink)':'none'}"/>`}).join('')}</svg>`;
@@ -2411,7 +2464,7 @@ async function zkDetail(i){const Z=await zkLoad();const v=SPF.view,it=v&&v.song.
   // ⑧ 散歩譜
   const s8=step(8,`<p>散歩譜の中で、この区間を太い枠で示した（上の図）。段B（歩いた時間）→ 段C（曲の時間）の台形が ⑦、段S・R（断面 → 音）が ③⑥、段H が ① の写真。</p><div class="ex-row"><button type="button" class="btn-line" id="zk-up">散歩譜のこの区間へ</button></div>`);
   const nav=`<nav class="zk-nav"><button type="button" class="spf-x" id="zk-prev" ${i?'':'disabled'}>◀ 前の区間</button><span>地点 ${i+1}/${N}　${it.startBar}〜${it.endBar}小節　${PLACES[it.place].ja}</span><button type="button" class="spf-x" id="zk-next" ${i<N-1?'':'disabled'}>次の区間 ▶</button>
-    <span class="zk-jump">${[1,2,3,4,5,6,7,8].map(n=>`<a href="#zk-s${n}">${'①②③④⑤⑥⑦⑧'[n-1]}</a>`).join('')}</span><button type="button" class="spf-x" id="zk-table-open">対応の一覧</button><button type="button" class="spf-x" id="spf-d-x">閉じる</button></nav>`;
+    <span class="zk-jump">${[1,2,3,4,5,6,7,8].map(n=>`<a href="#zk-s${n}">${'①②③④⑤⑥⑦⑧'[n-1]}</a>`).join('')}</span>${TRIAL?'':'<button type="button" class="spf-x" id="zk-table-open">対応の一覧</button>'}<button type="button" class="spf-x" id="spf-d-x">閉じる</button></nav>`;
   // 筋の帯（11/16 20:30 司令塔：初めての人が5分で写真から散歩譜までの筋を追えるように）。各段の結果を1行ずつ、押すとその段へ
   const trs=[it.trRv>0?'前より開けた':'',it.trRv<0?'前より狭まった':'',it.edgeIn?'境目を越えた':'',it.stop?'立ち止まり':'',it.lm?'目印':''].filter(Boolean);
   const flow=[[1,'写真',`${it.members.length>1?it.members.length+'枚・':''}${SPF.opt.time===false?'':new Date(it.members[0].ts*1000).toLocaleTimeString(LOC,{...tz,hour:'2-digit',minute:'2-digit'})}`],
@@ -2425,7 +2478,7 @@ async function zkDetail(i){const Z=await zkLoad();const v=SPF.view,it=v&&v.song.
   $('#spf-detail').hidden=false;spfBindChoice(i);ZK.sel=null;
   $('#spf-d-x').addEventListener('click',()=>{SPF.sel=null;$('#spf-detail').hidden=true;zkMark(null)});
   $('#zk-prev').addEventListener('click',()=>spfSelect(i-1));$('#zk-next').addEventListener('click',()=>spfSelect(i+1));
-  $('#zk-table-open').addEventListener('click',zkTableOpen);
+  if($('#zk-table-open'))$('#zk-table-open').addEventListener('click',zkTableOpen);
   $('#zk-play').addEventListener('click',()=>{seekTo((it.startBar-1)*BAR);if(!pl.playing)play();setTimeout(spfPlayIcon,60)});
   $('#zk-up').addEventListener('click',()=>{zkMark(i);$('#spf-canvas').scrollIntoView({behavior:'smooth',block:'center'})});
   $('#spf-detail').querySelectorAll('.zk-jump a, .zk-flow a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.getElementById(a.getAttribute('href').slice(1));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}));
@@ -2447,9 +2500,9 @@ function zkCard(no,it,i,paint){const q=zkPage(no);const card=$('#zk-card');if(!q
   const f=q.features.slice(-1)[0]; // 台帳の features のいちばん後ろ＝その要素だけを切る切りかえ
   card.innerHTML=`<b>${q.no} ${esc(q.name)}</b><small>${esc(q.chapterName)}・${esc(q.kindJa)}・型：${esc(q.type)}</small>
     <dl><dt>読む所</dt><dd>${esc((q.reads||[]).map(r=>r.replace(/^(v|it|t):/,'')).join('、')||'—')}</dd><dt>鳴る所</dt><dd>${esc(q.sounds)}</dd><dt>効きの幅</dt><dd>${esc(q.effect||'—')}</dd>
-    <dt>今</dt><dd>開発版：${esc(q.now.dev)}・体験版：${esc(q.now.trial)}${q.features.length?`（開発用 ON/OFF：${q.features.map(x=>x.id).join('・')}）`:''}</dd>${q.note?`<dt>メモ</dt><dd>${esc(q.note)}</dd>`:''}</dl>
+    <dt>今</dt><dd>開発版：${esc(q.now.dev)}・体験版：${esc(q.now.trial)}${q.features.length?`（開発用 ON/OFF：${q.features.map(x=>x.id).join('・')}）`:''}</dd>${q.note&&!TRIAL?`<dt>メモ</dt><dd>${esc(q.note)}</dd>`:''}</dl>
     ${!TRIAL&&!PREVIEW&&f&&q.sound==='yes'&&SPF.view&&SPF.view.wk&&!isReal(SPF.view.wk)?`<button type="button" class="btn-line" id="zk-cmp">▶ この区間を「${esc(f.id)}」OFF（A）と ON（B）で聴き比べ</button>`:''}`;
-  card.hidden=false;const b=$('#zk-cmp');if(b)b.addEventListener('click',()=>zkCompare(q,f.id,i));
+  if(!TRIAL){card.insertAdjacentHTML('beforeend',`<button type="button" class="btn-line" id="zk-book">図鑑のこのページを開く</button>`);$('#zk-book').addEventListener('click',()=>pbookOpen(q.no));} // 2026-11-22：図鑑の本の画面は開発版だけ（体験版では zukanBook も OFF）。体験版ではこのボタンを出さないcard.hidden=false;const b=$('#zk-cmp');if(b)b.addEventListener('click',()=>zkCompare(q,f.id,i));
   if(paint&&ZK.mk){const rv=$('#zk-rev');if(rv){zkPaint(rv,ZK.mk,it,q.region==='skyline'?'skyline':q.region||'none');$('#zk-rev-cap').textContent=q.region?`${q.no} ${q.name}：色の残った所を読んでいる`:`${q.no} ${q.name}：写真の一部の所ではなく、写真全体（または時間）から読む`}}}
 // 聴き比べ（今の聴き比べ画面を使う）：その要素の開発用 ON/OFF だけを変えた A（OFF）と B（今）
 async function zkCompare(q,fid,i){const wk=SPF.view&&SPF.view.wk;if(!wk)return;if(!$('#lc-pair').options.length){try{lcInit()}catch(e){console.warn(e)}}
@@ -2556,7 +2609,7 @@ $('#pr-prev').addEventListener('click',()=>{prStop();if(PR.i>0)PR.i--;prRender()
 $('#pr-close').addEventListener('click',presClose);$('#pr-book').addEventListener('click',()=>pbookOpen());
 document.addEventListener('keydown',e=>{if($('#pres').hidden||!$('#pbook').hidden)return;if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();$('#pr-next').click()}else if(e.key==='ArrowLeft'){e.preventDefault();$('#pr-prev').click()}else if(e.key==='Escape')presClose()});
 /* パタン図鑑（やさしい版）：台帳のページを、章ごとにカードで並べる。今の開発版で音が変わるもの（鳴る）を先に */
-async function pbookOpen(no){const Z=await zkLoad();if(!Z){toast('図鑑の台帳が読めませんでした');return}
+async function pbookOpen(no){if(FEATURES.zukanBook!==false&&!TRIAL)return zbOpen(no);const Z=await zkLoad();if(!Z){toast('図鑑の台帳が読めませんでした');return}
   const ch=Object.keys(Z.chapters).map(Number).filter(c=>c!==10).sort((a,b)=>(a===0?99:a)-(b===0?99:b));
   const RJ={viewCols:'空が横に続く割合',viewCover:'上のふさがり',open:'空の量',cellTree:'木のマス',cellField:'田畑や草のマス',cellBldg:'建物のマス',cellRoad:'道のマス',cellRoadBot:'足もとの道',cellBldgL:'左の建物',cellBldgR:'右の建物',plant:'植物の量',art:'灰色の面の量',sky:'空の量',skyline:'空との境目の形',horizon:'奥の抜け',edge:'線の多さ',bright:'明るさ',sat:'鮮やかさ',warmth:'色の暖かさ',texture:'ざらつき',highlight:'きらめき',diversity:'色の数',topHeavy:'上下の暗さのかたより',footSat:'足もとの鮮やかさ',footPlant:'足もとの植物',footArt:'足もとの灰色',topTree:'上の木',flower:'花',flower2:'花',water:'水',pan:'線の左右のかたより',shadow:'影',contrast:'明暗の差',tree:'木',grass:'草',gray:'灰色の面',warmMat:'暖かい色の素材',brightSurf:'明るい面',night:'夜',hour:'撮った時刻',dt:'歩いた時間',ts:'撮った時刻',place:'場所の性格',mood:'気分',sabi:'サビ',dapple:'木漏れ日',colRep:'くり返す縦の線',sideArt:'両側の建物',topNonSky:'上の空でない所',sideNonSky:'両側の空でない所',centerLowV:'まん中下の明るさ',sideV:'両側の明るさ',centerV:'まん中の明るさ',gateDiff:'まん中と周りの明るさの差',farBand:'遠くの帯',midBand:'中ほどの帯',nearBand:'近くの帯',plantL:'左の植物',plantR:'右の植物',plantC:'まん中の植物',plantTop:'上の植物',tunnelArt:'まん中下の灰色',rowRep:'くり返す横の線',cloud:'曇り空',openC:'空の量'};
   const reads=p=>[...new Set((p.reads||[]).flatMap(r=>{r=r.replace(/^(v|it|t|p):/,'');const m=/（(.*?)）/.exec(r);const ks=r.replace(/（.*?）/g,'').split(/[・、,]/).map(x=>x.trim()).filter(Boolean);return ks.every(k=>RJ[k])?ks.map(k=>RJ[k]):[m?m[1]:ks.map(k=>RJ[k]||k).join('・')]}))].join('、').replace(/[a-zA-Z][a-zA-Z0-9]+/g,w=>RJ[w]||w).replace(/ の左右5点/g,'の左右の高さ');
@@ -2567,6 +2620,75 @@ async function pbookOpen(no){const Z=await zkLoad();if(!Z){toast('図鑑の台�
   if(no){const c=document.getElementById('pb-'+no);if(c){c.classList.add('hl');setTimeout(()=>c.scrollIntoView({block:'center'}),50)}}else $('#pb-body').scrollTop=0}
 $('#pb-close').addEventListener('click',()=>{$('#pbook').hidden=true;$('#pb-body').querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'))});
 $('#pb-table').addEventListener('click',()=>zkTableOpen());
+/* 風景と音の図鑑（本の形。2026-11-22 図鑑担当、飯田「図鑑そのものを本として成り立つ質に」）。開発用 ON/OFF「zukanBook」（開発版 ON・体験版 OFF）。表示だけで、曲は変えない。
+   材料はすべて台帳 docs/zukan/pages.js（tools/zukan/build-pages.mjs が、コード・tools/zukan/book.mjs・docs/zukan/examples.json から作る）。画面に手で書いた文や数字は使わない。
+   目次（3つの部と、部・小見出しの頭の一文）→ 部ごとのカード（具体例の写真・星・見る所・今）→ 1ページ（前文 ✤ 見つけたら・具体例・アプリが見る所・だから、こう鳴る・ためしてみよう ✤ 後文）。
+   ▶ は、その具体例の写真1枚だけから作った短い音（見本の散歩の地点の試聴と同じ作り方。solo） */
+const ZB={view:'toc',no:null};
+const ZB_STAR={'★★':'★★ だれでも感じる（知覚）','★':'★ 景観の考え方にもとづく','':'星なし：作者が決めた組み合わせ'};
+const zbStar=p=>p.stars==null?'<span class="zb-star none" title="星はまだ付けていない">☆</span>':`<span class="zb-star" title="${esc(ZB_STAR[p.stars]||'')}">${p.stars||'—'}</span>`;
+const zbNow=p=>p.now.dev==='鳴る'?'今、音が変わる':p.now.dev==='測るだけ'?'測るだけ（音はこれから）':'これから';
+const zbIntro=x=>typeof x==='string'?x:(x&&x.text)||'';
+// アプリが見る所を、やさしい言葉で（台帳の読む値の名前は、（ ）の中の言葉か、この表で言いかえる。言いかえのない名前は出さない）
+const ZB_WORD={sky:'空の量',plant:'植物の量',art:'人工物の量',edge:'線の多さ',open:'開け方',water:'水面',horizon:'地平線の高さ',bright:'明るさ',sat:'色の鮮やかさ',warmth:'色の温かさ',texture:'ざらつき',highlight:'光る点',diversity:'色の数',topHeavy:'上下の暗さ',shadow:'影',contrast:'明暗の差',pan:'輪郭のかたより',flower:'花の色',viewCols:'空が横に続く割合',viewCover:'上のふさがり',skyline:'空との境目の形',tree:'木',grass:'草',gray:'灰色の面',warmMat:'暖色の素材',brightSurf:'明るい面',cellRoad:'道のマス',cellBldg:'建物のマス',cellField:'田畑や草のマス',cellTree:'木のマス',cellRoadBot:'足もとの道',cellBldgL:'左の建物',cellBldgR:'右の建物',topTree:'上の木',footSat:'足もとの色',footPlant:'足もとの植物',footArt:'足もとの人工物',rowRep:'横の線のくり返し',edgeRaw:'線の多さ',colRep:'縦の線のくり返し',gateDiff:'枠の内と外の明るさ',sideV:'両はしの明るさ',centerV:'まん中の明るさ',topNonSky:'上のふさがり',sideNonSky:'両はしのふさがり',centerLowV:'前の明るさ',placeStrength:'場所の性格のはっきりさ',place:'場所の性格',flower2:'赤・桃・紫の小さな色'};
+function zbReads(p){return [...new Set((p.reads||[]).map(r=>{r=r.replace(/^(v|it|t|p):/,'');const m=/（(.*?)）/.exec(r);const base=r.replace(/（.*?）/g,'');
+  const w=base.replace(/[A-Za-z][A-Za-z0-9]*/g,x=>ZB_WORD[x]||'').replace(/^[・、\s]+|[・、\s]+$/g,'').replace(/[・、]{2,}/g,'・');
+  return /[A-Za-z]/.test(base)?(w||(m?m[1]:'')):r}).filter(Boolean))].join('、')}
+function zbPages(Z){return Z.pages.filter(p=>p.part!=null).sort((a,b)=>a.order-b.order)}
+async function zbOpen(no){const Z=await zkLoad();if(!Z){toast('図鑑の台帳が読めませんでした');return}
+  const tb=$('#pbook .pr-top b');if(tb)tb.textContent='風景と音の図鑑';
+  $('#pbook').hidden=false;if(no&&Z.pages.some(p=>p.no===no))zbPage(Z,no);else zbToc(Z)}
+function zbCard(p){const ex=(p.examples||[])[0];
+  return`<button type="button" class="zb-card${p.now.dev==='鳴る'?'':' quiet'}" data-no="${esc(p.no)}">${ex?`<img src="${esc(ex.src)}" alt="" loading="lazy">`:'<span class="zb-noimg">写真はこれから</span>'}
+    <span class="zb-cn"><small>${esc(p.no)}</small>${esc(p.name)}${zbStar(p)}</span><span class="zb-look">${esc(p.lookJa||'')}</span><span class="zb-now">${zbNow(p)}${p.weak?'・⚠':''}</span></button>`}
+function zbToc(Z){ZB.view='toc';ZB.no=null;const by=Object.fromEntries(Z.pages.map(p=>[p.no,p]));
+  const toc=`<section class="zb-toc"><h2>目次</h2><p class="zb-mute">部と小見出しの頭の一文だけを続けて読むと、図鑑ぜんたいが分かる（本『パタン・ランゲージ』の目次にならった）。</p>${Z.parts.map(pt=>`<div class="zb-toc-part"><a href="#zb-part-${pt.no}"><b>第${pt.no}部　${esc(pt.name)}</b></a><p>${esc(zbIntro(pt.intro))}</p><ul>${pt.sections.map(sc=>`<li><b>${esc(sc.name)}</b>　${esc(sc.intro)}</li>`).join('')}</ul></div>`).join('')}
+    <div class="zb-toc-part"><a href="#zb-end"><b>結び　${esc(Z.ending.name)}</b></a><p>${esc(Z.ending.intro)}</p></div><div class="zb-toc-part"><a href="#zb-appx"><b>巻末　${esc(Z.appendix.name)}</b></a><p>${esc(Z.appendix.intro)}</p></div></section>`;
+  const parts=Z.parts.map(pt=>`<section class="zb-part" id="zb-part-${pt.no}"><div class="zb-part-h"><small>第${pt.no}部</small><h2>${esc(pt.name)}</h2><p class="zb-range">見る範囲：${esc(pt.range)}　／　音：${esc(pt.sound)}</p><p class="zb-lead">${esc(zbIntro(pt.intro))}</p></div>
+    ${pt.sections.map(sc=>`<h3>${esc(sc.name)}</h3><p class="zb-lead2">${esc(sc.intro)}</p><div class="zb-grid">${sc.pages.map(n=>by[n]).filter(Boolean).map(zbCard).join('')}</div>`).join('')}
+    ${pt.upcoming.length?`<div class="zb-up"><h4>これから（まだ音にならない）</h4><ul>${pt.upcoming.map(u=>`<li><b>${esc(u.name)}</b>　${esc(u.line)}</li>`).join('')}</ul></div>`:''}</section>`).join('');
+  const end=`<section class="zb-part" id="zb-end"><div class="zb-part-h"><small>結び</small><h2>${esc(Z.ending.name)}</h2><p class="zb-lead">${esc(Z.ending.intro)}</p></div><p>見本の散歩で、1枚の写真に重なっているものを確かめる：<button type="button" class="zb-link" id="zb-go-proc">写真から散歩譜まで通して見る</button></p></section>
+    <section class="zb-part" id="zb-appx"><div class="zb-part-h"><small>巻末</small><h2>${esc(Z.appendix.name)}</h2><p class="zb-lead">${esc(Z.appendix.intro)}</p></div><div class="zb-grid">${Z.appendix.pages.map(n=>by[n]).filter(Boolean).map(zbCard).join('')}</div></section>`;
+  $('#pb-body').innerHTML=`<div class="zb"><header class="zb-cover"><h1>風景と音の図鑑</h1><p>どんな風景から、どんな音が生まれるか。散歩で見つけて、自分の曲をつくるための手がかり。</p><p class="zb-mute">アプリが写真と時間から実際に読む所と、それで実際に変わる音から作っている（台帳 ${esc(Z.built)}・作曲 v${esc(Z.algorithmVersion)}）。星：${Object.values(ZB_STAR).join('／')}</p></header>${toc}${parts}${end}</div>`;
+  $('#pb-body').scrollTop=0;zbBind(Z)}
+function zbLinkify(Z,s){const names=Object.fromEntries(Z.pages.map(p=>[p.no,p]));return esc(s).replace(/「(\d+|X\d+) ([^」]+)」/g,(m,n,name)=>names[n]?`<button type="button" class="zb-link" data-no="${n}">「${n} ${name}」</button>`:m)}
+function zbPage(Z,no){ZB.view='page';ZB.no=no;const p=Z.pages.find(x=>x.no===no),t=p.text,list=zbPages(Z),i=list.findIndex(x=>x.no===no),pv=list[i-1],nx=list[i+1];
+  const ex=(p.examples||[]).map((e,k)=>`<figure><img src="${esc(e.src)}" alt="${esc(e.caption)}"><figcaption>${esc(e.caption)}<button type="button" class="zb-play" data-src="${esc(e.src)}">▶ この写真の音</button></figcaption></figure>`).join('');
+  const starLine=t&&t.star?`${p.stars==null?'☆':p.stars||'星なし'}（${esc(t.star)}）`:esc(p.stars==null?'星はまだ付けていない':ZB_STAR[p.stars]||'');
+  const body=`<article class="zb-page"><nav class="zb-pnav"><button type="button" class="zb-link" data-toc="1">目次</button><span class="zb-mute">第${p.part>3?'':p.part+'部　'}${esc(p.partName)}　／　${esc(p.section)}</span></nav>
+    <div class="zb-pgh"><span class="zb-no">${esc(p.no)}</span><h2>${esc(p.name)}</h2>${zbStar(p)}</div><p class="zb-mute">${starLine}</p>
+    ${t&&t.pre?`<p class="zb-pre">${zbLinkify(Z,t.pre)}</p>`:''}<div class="zb-orn">✤　✤　✤</div>
+    <p class="zb-find"><span class="zb-k">見つけたら</span>${t?`<b>${esc(t.find)}</b>${esc(t.find2||'')}`:esc(p.lookJa||'')}</p>
+    ${ex?`<div class="zb-ex">${ex}</div><p class="zb-mute">具体例は、今のアプリがどう判定するかではなく、その風景のお手本として選んだ写真（制作者の写真）。▶ は、その写真1枚だけから作った16秒の音。</p>`:'<p class="zb-mute">具体例の写真はこれから。</p>'}
+    <p class="zb-look2"><span class="zb-k">アプリが見る所</span>${esc(t&&t.look?t.look:zbReads(p))}</p>
+    <p class="zb-because"><span class="zb-k">だから、こう鳴る</span>${t?`<b>${esc(t.because)}</b>${esc(t.because2||'')}`:esc(p.sounds||'')}</p>
+    ${t&&t.tryIt?`<p class="zb-try"><span class="zb-k">ためしてみよう</span>${zbLinkify(Z,t.tryIt)}</p>`:''}
+    ${p.weak?`<p class="zb-warn">⚠ ${esc(p.weak)}</p>`:''}
+    ${t&&t.sketch?`<p class="zb-mute">スケッチ（標語「${esc(t.motto||'')}」）はこれから（制作者が描く）。</p>`:''}
+    <div class="zb-orn">✤　✤　✤</div>${t&&t.post?`<p class="zb-post">${zbLinkify(Z,t.post)}</p>`:''}
+    ${t?'':'<p class="zb-mute">このページの文（見つけたら・だから、こう鳴る・ためしてみよう）はこれから書く。</p>'}
+    <details class="zb-num"><summary>今のアプリでは（数字）</summary><p>開発版：${esc(p.now.dev)}／体験版：${esc(p.now.trial)}。${esc(p.effect||'')}${p.note?`<br>${esc(p.note)}`:''}</p></details>
+    <nav class="zb-pager">${pv?`<button type="button" class="zb-link" data-no="${esc(pv.no)}">◀ ${esc(pv.no)} ${esc(pv.name)}</button>`:'<span></span>'}${nx?`<button type="button" class="zb-link" data-no="${esc(nx.no)}">${esc(nx.no)} ${esc(nx.name)} ▶</button>`:''}</nav></article>`;
+  $('#pb-body').innerHTML=`<div class="zb">${body}</div>`;$('#pb-body').scrollTop=0;zbBind(Z)}
+function zbBind(Z){const b=$('#pb-body');
+  b.querySelectorAll('[data-no]').forEach(e=>e.addEventListener('click',()=>{stopAudition();zbPage(Z,e.dataset.no)}));
+  b.querySelectorAll('[data-toc]').forEach(e=>e.addEventListener('click',()=>{stopAudition();zbToc(Z)}));
+  b.querySelectorAll('.zb-toc a').forEach(a=>a.addEventListener('click',ev=>{ev.preventDefault();const t=document.getElementById(a.getAttribute('href').slice(1));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}));
+  b.querySelectorAll('.zb-play').forEach(e=>e.addEventListener('click',()=>zbPlay(e.dataset.src,e)));
+  const g=$('#zb-go-proc');if(g)g.addEventListener('click',()=>{$('#pbook').hidden=true;zkStart('E')})}
+// ▶ その写真1枚だけの音：アプリと同じ解析と作曲（solo＝見本の散歩の地点の試聴と同じ）
+async function zbPlay(src,btn){const key='zb:'+src;if(aud.key===key){stopAudition();document.querySelectorAll('.zb-play').forEach(x=>x.classList.remove('on'));return}
+  if(!AC)initAudio();if(pl.playing)pause();stopAudition();const token=++aud.token;aud.key=key;
+  document.querySelectorAll('.zb-play').forEach(x=>x.classList.toggle('on',x===btn));
+  try{await AC.resume()}catch(_){}
+  const im=await new Promise(res=>{const x=new Image();x.onload=()=>res(x);x.onerror=()=>res(null);x.src=src});if(!im||token!==aud.token)return;
+  const c=window.TC.preparePhoto(im),node={id:'zb-'+src,src,params:window.TC.analyze(c),ts:Math.floor(Date.now()/1000)};
+  const s=await compose([node],{solo:true});if(token!==aud.token)return;
+  const now=AC.currentTime;master.gain.cancelScheduledValues(now);master.gain.setValueAtTime(1,now);
+  const t0=now+.08;s.events.forEach(e=>playNote(e,t0+e.t));
+  aud.timer=setTimeout(()=>{stopAudition();document.querySelectorAll('.zb-play').forEach(x=>x.classList.remove('on'))},(AUDITION_BARS*BAR+1.5)*1000)}
+$('#pb-close').addEventListener('click',()=>{if(aud.key&&String(aud.key).startsWith('zb:'))stopAudition()});
+$('#pb-toc')&&$('#pb-toc').addEventListener('click',async()=>{stopAudition();const Z=await zkLoad();if(Z)zbToc(Z)});
 $('#zk-start').addEventListener('click',()=>zkStart('E'));$('#zk-table-dev').addEventListener('click',zkTableOpen);
 // URL に ?proc=E（見本の散歩の名前）を付けると、開いてすぐ通して見る。&pt=3 で地点3から。?zukan=1 で対応の一覧（開発版だけ。ゼミで直接開くため）
 // 発表用のボタン（2026-11-18）：開発版の画面の上の「▶ 発表：写真から曲まで通して見る」・「対応の一覧」。体験版の画面（開発版の中）のはじめの画面にも同じボタンを出し、押すと開発版の画面に戻してから開く
