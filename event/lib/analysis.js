@@ -34,7 +34,18 @@ const PARAM=Object.freeze({
   CELL_BLDG_BLUE_MAX:.15, CELL_BLDG_PLANT_MAX:.5, CELL_BLDG_Y_MAX:.75, CELL_BLDG_SKY_MAX:.5, CELL_BLDG_HV_MAX:.45,
   CELL_FIELD_PLANT_MIN:.12, CELL_FIELD_Y_MIN:.45, CELL_FIELD_S_MIN:.24, CELL_FIELD_VIEW_MIN:.9, CELL_FIELD_RELV_MIN:.32,
   CELL_TREE_PLANT_MIN:.34, CELL_TREE_Y_MAX:.55, CELL_TREE_HV_MAX:.71, CELL_TREE_SKYDIST_MIN:.36,
-  PLACE_CELL_NAT:-.12, PLACE_CELL_NAT_SLOPE:1.5,
+  // 近くの物の写真（2026-11-24、作曲 0.65。飯田「近くの物の写真は分類できないにする」）：舗装・地面・草むら・壁などを近くから写した写真は、風景の広がりがないので「分類できない」。
+  //   見分け方：①きめが上から下までそろっている（写真を横 NEAR_BANDS 本の帯に切り、帯ごとの明るさの変わり方の、最小÷最大が NEAR_EVEN_MIN より大きい。風景は空や遠くがなめらかで、手前が細かい）
+  //   ②空（そうじ後）がほとんどない ③暗い所が少ない（森の中や夜と分ける） ④上 1/3 と下 1/3 の色がほぼ同じ ⑤上下に2つに分けても色の差が小さい（地平線・建物と地面のような分かれ目がない）
+  NEAR_BANDS:6, NEAR_DARK_Y:.15, NEAR_EVEN_MIN:.5, NEAR_SKY_MAX:.02, NEAR_DARK_MAX:.04, NEAR_TB_MAX:.25, NEAR_SPLIT_MAX:.4,
+  // 建物にはさまれた通り（2026-11-24、作曲 0.65）：空が横に続いていても、建物のマスが VIEW_BLDG_MAX 以上なら「囲まれている」（ビルにはさまれた通り・住宅地の細い道が「開けている」になっていた）
+  VIEW_BLDG_MAX:.2,
+  // 線の向きのそろい方（2026-11-25、作曲 0.69。飯田「見分けの改善続けて。手法はイニシアチブをとっていい」）：人工物はまっすぐな線（向きがそろう）、木や草は向きがばらばら。
+  //   街と風景を分けるのに昔から使われてきた見分け方（線の向きのまとまり）。8画素のマスごとに、明るさの変わり方の強さ（LINE_ENERGY_MIN 以上）と、向きのそろい（LINE_COH_MIN 以上）を見て、
+  //   「まっすぐな線のマス」の割合 lineStraight を出す。lineVert＝強い たての線が LINE_VERT_RUN 画素以上続く所の割合（柱・壁・窓のふち）。
+  //   街か自然か＝（木＋田畑や草）−（建物＋道）− LINE_STRAIGHT_W×lineStraight − LINE_VERT_W×lineVert が PLACE_LINE_NAT 以上なら自然（opts.lines。OFF で今までの PLACE_CELL_NAT）
+  LINE_ENERGY_MIN:.0016, LINE_COH_MIN:.55, LINE_EDGE_MIN:.08, LINE_VERT_RUN:18, LINE_STRAIGHT_W:.7, LINE_VERT_W:4, PLACE_LINE_NAT:-.28,
+  PLACE_CELL_NAT:-.02, PLACE_CELL_NAT_OLD:-.12, PLACE_NONE_CELLS:.33, PLACE_CELL_NAT_SLOPE:1.5, // 2026-11-24（T-082、飯田「目視も判定材料に」）：街か自然かの境目 -0.12 → -0.02、マスの合計（道・建物・田畑や草・木）が PLACE_NONE_CELLS 以上なら「分類できない」にしない（opts.fix2。OFF で -0.12・今までの分類できない）
   // 枝（9.1⑤）：緑道＝自然の側で道が BRANCH_ROAD_MIN 以上、路地＝道の幅÷左右の建物が BRANCH_DH_ALLEY 未満、田畑や草＝開けた自然で田畑や草のマスが BRANCH_FIELD_MIN 以上
   BRANCH_ROAD_MIN:.05, BRANCH_DH_ALLEY:4.6, BRANCH_FIELD_MIN:.01,
   // 暗い木（T-031 ③ 案 E。2026-11-07）：色の薄い緑・暗い葉・暗い所の緑も植物に数える（ON のとき）
@@ -87,6 +98,10 @@ const PARAM=Object.freeze({
   // 花のまちがいを減らす（2026-11-18、T-082。開発用 ON/OFF「flowerFix」）：花に数えるのは赤・桃・紫（色相 FLOWER_FIX_H0° 未満か FLOWER_FIX_H1° 以上）だけ。8×8 画素の区画の FLOWER_FIX_BLOCK より多くを占める大きなまとまりも数えない（flower2）。
   //   橙〜黄（夕日に照らされた木・田の縁）、暗い緑〜青（日陰の葉）、大きな看板などが花になっていた。散歩履歴で「花あり」のまちがいが 221→5・228→2 枚（tools/validate/landscape-flower.mjs）
   FLOWER_FIX_H0:10, FLOWER_FIX_H1:250, FLOWER_FIX_BLOCK:.6,
+  // 水の見分けの作り直し（2026-11-24、作曲 0.66。飯田「水の見分けもリベンジ」「目視も手がかりに」）：今までの「下半分の空の色」は、駐車場・舗装・曇り空を水と読み、
+  //   目で見た正解（463枚）で当たりが 4割だった。新しい決まり＝横向きの線が多い（WATER_HZ_MIN。水平線・岸・さざ波）＋大きなむらが少ない（WATER_COARSE_MAX。なめらかに広がる）。opts ではなく F.waterFix（OFF で今まで）
+  //   それだけだと広い道路・田畑・低い町並みも入った（目で全部見て、当たり 44%）ので、「空が広く開けている」（曇り空を足した開け方 openC が WATER_OPEN_MIN より大きい）も条件にした。見つかるのは海・湖・大きな川。細い川や水路は見つけられない
+  WATER_HZ_MIN:.606, WATER_COARSE_MAX:.036, WATER_OPEN_MIN:.706,
   WATER_MIN:.08, FLOWER_MIN:.03, VOL_DRONE:.05, VOL_RIPPLE:.012, VOL_GLOCK:.02,
   // 曲の頭と終わりのフェード（STEP 8、ステップ11）
   FADE_IN:2, FADE_OUT:4,
@@ -149,6 +164,7 @@ const PARAM=Object.freeze({
   INTRO_MAX_VOICES:2, INTRO_CUTOFF:1000, CLIMAX_MIN_VOICES:3, CLIMAX_CUTOFF:16000,
   GAIN_NORMAL:.72, GAIN_CLIMAX:1, MELODY_PROB:.42, OUTRO_THIN_BARS:3, FADE_START:150,
   // STEP 9 音の合成（基本の音量）
+  LEAD_INS_LEVEL:{flute:.8,strings:.95,synth:2.8,epiano:1.05,marimba:2.6,glass:1.1}, // T-130：メロディを主な楽器で鳴らすときの音量の倍率（鐘の音と同じくらいの大きさに聞こえるように。値（暫定））
   VOL_PAD:.04, VOL_KEYS:.06, VOL_PLUCK:.045, VOL_BELL:.05, VOL_BASS:.12, VOL_SUB:.18, VOL_SWELL:.07,
 });
 
@@ -164,6 +180,8 @@ const VALUE_KEYS=['sky','plant','art','edge','open','bright','sat','horizon','pa
   'plantDk','treeDk','grassDk','plantDkArt',
   // 空のそうじ（9.1③。2026-11-11）
   'sky2','cloud2','cloudArt2','skyX2','skyXArt2','skyXWarm2','openX2','horizonX2','viewCols','viewCover','cellRoad','cellBldg','cellField','cellTree','cellRoadBot','cellBldgL','cellBldgR',
+  // 近くの物の写真（2026-11-24）
+  'nearEven','nearDark','nearTB','nearSplit','waterHz','waterCoarse','lineStraight','lineVert',
   // ステップ10（2026-10-20）
   'edgeRaw','plantLo','treeLo','grassLo','flowerLo','artLow','rowRep',
   // ステップ18 1枚の写真の構造（2026-10-28。音はまだ使わない）
@@ -199,6 +217,21 @@ function styleWear(style,place,boost){const t=STYLE_WEAR[style];if(!t)return nul
 /* 街の種類 → 楽器（2026-10-21、ユーザーの希望 D-25）。都会的な要素は電子ピアノ（ユーザーの決定 D-28）。
    ガラスの音はガラス張りの建物に、木琴は木の素材に使う方針（D-28）だが、素材は色と明るさでは見分けられなかったので、
    一軒家の多い街の木琴は、素材が見分けられるまで仮に残す（2026-10-21、ユーザーの許可 D-30）。素材の見分けは AI の塗り分け（ステップ17）で行う */
+// 水の言葉（2026-11-24、作曲 0.67。飯田「水はどっちも」＝当たりも、見つける数も）：写真だけでは細い川・水路・池を見つけられないので、歩いた人の一言メモ・書き足したメモに水の言葉があれば、その地点を水とする。
+//   言葉の表を当てるだけ（AI ではない）。地名（品川・池袋・港区など）は水にしない。メモは端末の外に出さない。実装側の仮決め（要確認）
+const WATER_WORDS=['水辺','水面','水路','運河','用水','せせらぎ','渓流','清流','河川','河原','川原','河口','海岸','海辺','砂浜','浜辺','波打ち際','入り江','湖','沼','滝','渚','潮','お堀','噴水','river','ocean','lake','pond','canal','harbor','harbour','beach','shore','waterfall','stream','creek','seaside'];
+const WATER_1={ // 1文字の言葉は、前後の字が地名や別の言葉になるものを除く
+  '川':{before:'品立市荒香石奈旭深中小北南東西及古長宮吉早相砂緑黒白桂賀堀滑谷',after:'崎口越端町駅区市県村島西上下原田辺合名内柳'},
+  '海':{before:'北上熱東西南内臨新',after:'老苔外道軍賊鮮苔抜'},
+  '池':{before:'菊小大蓮溜',after:'袋田上尻之ノ'},
+  '港':{before:'空',after:'区南北町'},
+  '波':{before:'電筑丹阿難津',after:'長'}};
+function waterWord(text){const t=String(text||'').toLowerCase();if(!t)return false;if(WATER_WORDS.some(w=>t.includes(w)))return true;
+  if(/\bsea\b/.test(t))return true;
+  for(const ch in WATER_1){let i=-1;while((i=t.indexOf(ch,i+1))>=0){const b=t[i-1]||'',a=t[i+1]||'';if(!(b&&WATER_1[ch].before.includes(b))&&!(a&&WATER_1[ch].after.includes(a)))return true}}
+  return false}
+// T-130 (a)（2026-11-24）：場所の性格ごとの主な楽器の候補（前が第1。前のまとまりと同じになるときは次へ）
+const PLACE_INS={openNat:['flute','strings'],closedNat:['marimba','strings'],openCity:['epiano','glass'],closedCity:['synth','epiano'],none:['glass','epiano']};
 const CITY_TYPES={apartment:{ja:'マンション・団地の多い街',ins:'epiano',insJa:'電子ピアノ'},houses:{ja:'一軒家の多い街',ins:'marimba',insJa:'木琴'},shops:{ja:'店の多い街',ins:'epiano',insJa:'電子ピアノ'}};
 /* 街の種類：横線のくり返しが強ければマンション・団地、線が多く植物が少なければ店、それ以外は一軒家。p.edgeRaw・p.plant は1地点の平均 */
 function cityType(p){const K=PARAM;if((p.rowRep||0)>=K.CITY_REP)return'apartment';if((p.edgeRaw||0)>=K.CITY_SHOP_EDGE&&(p.plant||0)<K.CITY_SHOP_PLANT_MAX)return'shops';return'houses'}
@@ -365,7 +398,30 @@ function analyzePixels(d,w,h,opts){ // opts.masks：画素ごとの分類の印�
   const FX=(()=>{const B=8,bw=Math.ceil(w/B),blk=new Uint16Array(bw*Math.ceil(h/B)),bi=i=>(((i/w)|0)/B|0)*bw+(((i%w)/B)|0),m=new Uint8Array(n);let c=0;
     for(let i=0;i<n;i++)if(isFl[i]&&!isPl[i])blk[bi(i)]++;
     for(let i=0;i<n;i++){if(!isFl[i]||isPl[i]||flOr[i]||blk[bi(i)]>B*B*K.FLOWER_FIX_BLOCK)continue;m[i]=1;c++}return{v:c/n,m}})();
-  const out={sky:skyR,plant:plant/n,art:art/n,edge:Math.min(1,edgeRaw/K.EDGE_NORM),open,
+  // 近くの物の写真の手がかり（2026-11-24。PARAM の NEAR_* の説明を参照）。明るさは 0〜1、色は 0〜1 の RGB の距離
+  const NR=(()=>{const Yv=new Float32Array(n),rc=new Float64Array(h*3);let dk=0;
+    for(let i=0,j=0;i<n;i++,j+=4){const yv=(.299*d[j]+.587*d[j+1]+.114*d[j+2])/255;Yv[i]=yv;if(yv<K.NEAR_DARK_Y)dk++;const r=((i/w)|0)*3;rc[r]+=d[j];rc[r+1]+=d[j+1];rc[r+2]+=d[j+2]}
+    for(let i=0;i<h*3;i++)rc[i]/=w*255;
+    const B=K.NEAR_BANDS;let mn=Infinity,mx=0;
+    for(let b=0;b<B;b++){const y0=Math.floor(b*(h-1)/B),y1=Math.floor((b+1)*(h-1)/B);let sm=0;for(let y=y0;y<y1;y++)for(let x=0;x<w-1;x++){const i=y*w+x;sm+=Math.abs(Yv[i+1]-Yv[i])+Math.abs(Yv[i+w]-Yv[i])}const v=y1>y0?sm/((y1-y0)*(w-1)):0;if(v<mn)mn=v;if(v>mx)mx=v}
+    const avg=(a,b)=>{const o=[0,0,0];for(let y=a;y<b;y++)for(let c=0;c<3;c++)o[c]+=rc[y*3+c];return o.map(v=>v/Math.max(1,b-a))},dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2]);
+    const h3=Math.floor(h/3),tb=dist(avg(0,h3),avg(Math.floor(2*h/3),h));
+    const cs=new Float64Array(h*3);for(let y=0;y<h;y++)for(let c=0;c<3;c++)cs[y*3+c]=rc[y*3+c]+(y?cs[(y-1)*3+c]:0);
+    let sp=0;for(let y=Math.floor(h/8);y<Math.floor(h*7/8);y++){let q=0;for(let c=0;c<3;c++){const a=cs[y*3+c]/(y+1),b2=(cs[(h-1)*3+c]-cs[y*3+c])/(h-y-1);q+=(a-b2)*(a-b2)}q=Math.sqrt(q);if(q>sp)sp=q}
+    // 水の手がかり（2026-11-24）：hz＝明るさの変わり目のうち、縦方向の変化（＝横向きの線）の割合／coarse＝細かくぼかした絵と大きくぼかした絵の差の平均（大きなむら）
+    let sx=0,sy=0;for(let y=0;y<h-1;y++)for(let x=0;x<w-1;x++){const i=y*w+x;sx+=Math.abs(Yv[i+1]-Yv[i]);sy+=Math.abs(Yv[i+w]-Yv[i])}
+    const boxOf=k=>{const W2=w+2*k,H2=h+2*k,I=new Float64Array((W2+1)*(H2+1));for(let y=0;y<H2;y++){const yy=Math.min(h-1,Math.max(0,y-k));let run=0;for(let x=0;x<W2;x++){const xx=Math.min(w-1,Math.max(0,x-k));run+=Yv[yy*w+xx];I[(y+1)*(W2+1)+x+1]=I[y*(W2+1)+x+1]+run}}
+      return(x,y)=>(I[(y+2*k)*(W2+1)+x+2*k]-I[y*(W2+1)+x+2*k]-I[(y+2*k)*(W2+1)+x]+I[y*(W2+1)+x])/(4*k*k)},b2=boxOf(2),b8=boxOf(8);
+    let co=0;for(let y=0;y<h;y++)for(let x=0;x<w;x++)co+=Math.abs(b2(x,y)-b8(x,y));
+    // 線の向きのそろい方（2026-11-25）：明るさの傾き（となり3×3 の重みつきの差）から、8画素のマスごとの「まっすぐな線」と、たてに長く続く強い線
+    const gX=new Float32Array(n),gY=new Float32Array(n);
+    for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x;gX[i]=(Yv[i-w+1]+2*Yv[i+1]+Yv[i+w+1]-Yv[i-w-1]-2*Yv[i-1]-Yv[i+w-1])/4;gY[i]=(Yv[i+w-1]+2*Yv[i+w]+Yv[i+w+1]-Yv[i-w-1]-2*Yv[i-w]-Yv[i-w+1])/4}
+    const CS8=8,cw8=Math.floor(w/CS8),ch8=Math.floor(h/CS8);let st8=0;
+    for(let cy=0;cy<ch8;cy++)for(let cx=0;cx<cw8;cx++){let jxx=0,jyy=0,jxy=0;for(let y=cy*CS8;y<cy*CS8+CS8;y++)for(let x=cx*CS8;x<cx*CS8+CS8;x++){const i=y*w+x;jxx+=gX[i]*gX[i];jyy+=gY[i]*gY[i];jxy+=gX[i]*gY[i]}
+      if((jxx+jyy)/(CS8*CS8)>K.LINE_ENERGY_MIN&&Math.sqrt((jxx-jyy)*(jxx-jyy)+4*jxy*jxy)/(jxx+jyy+1e-6)>K.LINE_COH_MIN)st8++}
+    let vl=0;for(let x=0;x<w;x++){let run=0;for(let y=0;y<=h;y++){const i=y*w+x,on=y<h&&Math.hypot(gX[i],gY[i])>K.LINE_EDGE_MIN&&Math.abs(gX[i])>2*Math.abs(gY[i]);if(on)run++;else{if(run>=K.LINE_VERT_RUN)vl+=run;run=0}}}
+    return{even:mn/(mx+1e-4),dark:dk/n,tb,split:sp,hz:sy/(sx+sy+1e-6),coarse:co/n,straight:cw8*ch8?st8/(cw8*ch8):0,vert:vl/n}})();
+  const out={nearEven:NR.even,nearDark:NR.dark,nearTB:NR.tb,nearSplit:NR.split,waterHz:NR.hz,waterCoarse:NR.coarse,lineStraight:NR.straight,lineVert:NR.vert,sky:skyR,plant:plant/n,art:art/n,edge:Math.min(1,edgeRaw/K.EDGE_NORM),open,
     bright:mean,sat:ss/n,footSat:n>footFrom?footS/(n-footFrom):0,horizon:hz,pan:edges?(eR-eL)/edges:0,
     shadow:dark/n,contrast:Math.min(1,sd/K.CONTRAST_NORM),
     // A8 色温度（−1〜1）、A10 きらめき
@@ -503,15 +559,22 @@ function judgePlace(p,prev,opts){
   if(O.surround||O.night){const q={...p};if(O.surround){q.art=Math.max(0,p.art-PARAM.GROUND_ART_W*(p.artLow||0));q.warmMat=0}if(O.night)q.warmMat=0;p=q}
   // 水面（写真の下半分の空色。water は下半分に対する割合なので、写真全体では半分）も自然に数える：海辺・河川敷が「開けた自然」になるように。実装側の仮決め（要確認）
   const K=PARAM,artAll=p.art+(p.warmMat||0),wat=(p.water||0)/2,nat=p.plant+wat,mat=nat+artAll;
-  if(p.sky<K.PLACE_NONE_MAX&&p.plant<K.PLACE_NONE_MAX&&artAll<K.PLACE_NONE_MAX)return{place:'none',natural:.5,strength:0};
+  // 2026-11-24（opts.fix2、既定 ON）：色の割合が小さくて「分類できない」になる写真でも、マスの見分けで道・建物・田畑や草・木がはっきり写っていれば（合計 PLACE_NONE_CELLS 以上）、見通しとマスで決める。
+  //   目で見た判定：調整用で「分類できない」の 12枚のうち 9枚は普通の風景だった（夕方の広い道・高架の下・駐車場など）。近くの物だけの写真（舗装・掲示物）はマスが少ないので、分類できないのまま
+  const fix2=O.fix2!==false,cellSum=p.cellBldg===undefined?0:p.cellTree+p.cellField+p.cellBldg+p.cellRoad;
+  if(p.sky<K.PLACE_NONE_MAX&&p.plant<K.PLACE_NONE_MAX&&artAll<K.PLACE_NONE_MAX&&!(fix2&&O.cells&&O.view&&!O.night&&p.viewCols!==undefined&&cellSum>=K.PLACE_NONE_CELLS))return{place:'none',natural:.5,strength:0};
+  // 2026-11-24（opts.near、作曲 0.65）：近くの物だけを写した写真（舗装・地面・草むら・壁の近写）は「分類できない」。きめが上から下までそろい、空がなく、暗い所が少なく、上下の色の差が小さい写真
+  if(O.near&&!O.night&&p.nearEven!==undefined&&p.nearEven>K.NEAR_EVEN_MIN&&(p.sky2||0)<K.NEAR_SKY_MAX&&p.nearDark<K.NEAR_DARK_MAX&&p.nearTB<K.NEAR_TB_MAX&&p.nearSplit<K.NEAR_SPLIT_MAX)return{place:'none',natural:.5,strength:0,near:true};
   // 9.1⑤ マスごとの見分け（opts.cells、夜でない写真だけ）：街か自然かを「緑の量」ではなく（木＋田畑や草）−（建物＋道）で決める。緑でない自然（土・水・山・枯れ色）も、建物と道がなければ自然の側に入る（2026-11-12）
   const useCells=O.cells&&!O.night&&p.cellBldg!==undefined;
-  const natural=useCells?Math.min(1,Math.max(0,.5+((p.cellTree+p.cellField)-(p.cellBldg+p.cellRoad)-K.PLACE_CELL_NAT)*K.PLACE_CELL_NAT_SLOPE)):mat<K.PLACE_MIN_MAT?.5:nat/mat;
+  const useLines=useCells&&O.lines&&p.lineStraight!==undefined; // 2026-11-25（opts.lines）：まっすぐな線が多いほど街の側へ
+  const natural=useCells?Math.min(1,Math.max(0,.5+((p.cellTree+p.cellField)-(p.cellBldg+p.cellRoad)-(useLines?K.LINE_STRAIGHT_W*p.lineStraight+K.LINE_VERT_W*p.lineVert+K.PLACE_LINE_NAT:fix2?K.PLACE_CELL_NAT:K.PLACE_CELL_NAT_OLD))*K.PLACE_CELL_NAT_SLOPE)):mat<K.PLACE_MIN_MAT?.5:nat/mat;
   const wasOpen=prev==='openNat'||prev==='openCity',wasNat=prev==='openNat'||prev==='closedNat',known=prev&&prev!=='none';
   const OPEN=O.open45?K.PLACE_OPEN_45:K.PLACE_OPEN; // T-040（2026-11-07、飯田の決定）：境目を 0.45 に（opts.open45 のとき）
   // 9.1④ 見通し（opts.view、夜でない写真だけ）：空の量ではなく「空が横に続く・上がふさがれていない」で開けているかを決める（2026-11-11）
   const useView=O.view&&!O.night&&p.viewCols!==undefined;
-  const isOpen=useView?(p.viewCols>=K.VIEW_SKY_COLS_MIN&&p.viewCover<K.VIEW_COVER_MAX):known&&wasOpen?p.open>=OPEN-K.PLACE_KEEP:p.open>=OPEN;
+  const walls=O.walls&&useCells&&p.cellBldg>=K.VIEW_BLDG_MAX; // 2026-11-24（opts.walls）：建物のマスが多い通りは、空が横に続いていても囲まれている
+  const isOpen=useView?(p.viewCols>=K.VIEW_SKY_COLS_MIN&&p.viewCover<K.VIEW_COVER_MAX&&!walls):known&&wasOpen?p.open>=OPEN-K.PLACE_KEEP:p.open>=OPEN;
   const isNat=useCells?natural>=K.PLACE_NATURAL:known&&wasNat?natural>=K.PLACE_NATURAL-K.PLACE_KEEP:natural>=K.PLACE_NATURAL;
   const place=isOpen?(isNat?'openNat':'openCity'):(isNat?'closedNat':'closedCity');
   // 強さ：境目からどれだけ離れているか（2つのものさしの近いほう。0〜1）
@@ -549,5 +612,5 @@ function mainMaterial(p,opts){const O=opts||{};let best=null,bv=0;for(const k of
 
 function changeKeys(features){return['sky','plant','art','edge',...((features||{}).open===false?[]:['open'])]}
 
-root.TC=Object.freeze({patternsOf,l3Features,PARAM,VALUE_KEYS,SCALES,SCALE_JA,KEYS,PC,ENV_JA,PLACES,INSTR,CITY_TYPES,cityType,STYLES,STYLE_WEAR,STYLE_INS_JA,PLACE_ORDER,styleWear,judgePlace,judgeBranch,BRANCH_JA,addBeforeJudge,isNight,hourJST,mainMaterial,mulberry32,analyzePixels,analyze,preparePhoto,shrink,pixelsOf,makeCanvas,judgeNode,changeKeys,skylinePoints});
+root.TC=Object.freeze({patternsOf,l3Features,PARAM,VALUE_KEYS,SCALES,SCALE_JA,KEYS,PC,ENV_JA,PLACES,INSTR,PLACE_INS,waterWord,CITY_TYPES,cityType,STYLES,STYLE_WEAR,STYLE_INS_JA,PLACE_ORDER,styleWear,judgePlace,judgeBranch,BRANCH_JA,addBeforeJudge,isNight,hourJST,mainMaterial,mulberry32,analyzePixels,analyze,preparePhoto,shrink,pixelsOf,makeCanvas,judgeNode,changeKeys,skylinePoints});
 })(typeof self!=='undefined'?self:this);
